@@ -49,9 +49,15 @@ if $REBUILD ; then
   mvn clean compile
 fi
 
+echo "CHARLES -------" 
+echo "$KEYSTORE_FILE"
+
 exec mvn exec:java -Dexec.args="$*" \
+  -Djavax.net.debug=ssl -Djavax.net.ssl.trustStoreType=jks \
+  -Dsun.security.ssl.allowUnsafeRenegotiation=true \
   -Djavax.net.ssl.keyStore=$KEYSTORE_FILE -Djavax.net.ssl.keyStorePassword=$KEYSTORE_PWD \
   -Djavax.net.ssl.trustStore=$KEYSTORE_FILE -Djavax.net.ssl.trustStorePassword=$KEYSTORE_PWD \
   -Djava.util.logging.config.file=$SCRIPT_DIR/lib/logging.properties \
   -Dnet.java.sip.communicator.SC_HOME_DIR_LOCATION=$SC_HOME_DIR_LOCATION \
   -Dnet.java.sip.communicator.SC_HOME_DIR_NAME=$SC_HOME_DIR_NAME 2>&1 | tee $LOG_HOME/output.log
+

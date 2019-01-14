@@ -297,4 +297,29 @@ public class NewContentPacketExtension
     {
         return super.toXML();
     }
+
+    @Override
+    public String toString() {
+
+        StringBuilder builder = new StringBuilder();
+
+        // namespace
+        builder.append("namespace: ");
+        builder.append(getNamespace());
+        builder.append("\n");
+        // text
+        builder.append("text: ");
+        builder.append(getText());
+        builder.append("\n");
+        // attributes
+        for (String name : getAttributeNames())
+        {
+            builder.append("attribute name: " + name);
+            builder.append("\n");
+            builder.append("attribute: ");
+            builder.append(getAttribute(name).toString());
+            builder.append("\n");
+        }
+        return builder.toString();
+    }
 }

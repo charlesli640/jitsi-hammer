@@ -115,3 +115,6 @@ The stats will be saved in JSON in a directory depending of your system :
 You can adjust the logging configuration of the JVM with the file ./lib/logging.properties .  
 
 For now it is set to only display at a WARNING level, but you can set "org.jitsi.hammer.level" to INFO if you want to print the INFO log of Jitsi-Hammer (but not libjitsi).
+
+## Test script demo
+./jitsi-hammer.sh -u "https://jitsi-meet-charles.magnet.com/http-bind/" -room 1234 -users 1 -length 120

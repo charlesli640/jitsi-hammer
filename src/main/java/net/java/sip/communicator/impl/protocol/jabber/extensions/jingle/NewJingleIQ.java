@@ -18,6 +18,7 @@
 
 package net.java.sip.communicator.impl.protocol.jabber.extensions.jingle;
 
+import org.jitsi.util.Logger;
 import org.jivesoftware.smack.packet.IQ;
 
 import java.util.ArrayList;
@@ -29,6 +30,13 @@ import java.util.List;
  */
 public class NewJingleIQ extends IQ
 {
+    /**
+     * The <tt>Logger</tt> used by the <tt>NewJingleIQ</tt> class and its
+     * instances for logging output.
+     */
+    private static final Logger logger
+            = Logger.getLogger(NewJingleIQ.class);
+
     /**
      * The name space that jingle belongs to.
      */
@@ -98,6 +106,9 @@ public class NewJingleIQ extends IQ
         xml.rightAngleBracket();
         for (NewContentPacketExtension cpe : contentList)
         {
+            //logger.info("NewContentPackageExtension: " + cpe);
+            logger.info("NewContentPackageExtension: " + cpe.toString());
+            logger.info("NewContentPackageExtension: " + cpe.toXML());
             xml.element(cpe);
         }
         if (reason != null)

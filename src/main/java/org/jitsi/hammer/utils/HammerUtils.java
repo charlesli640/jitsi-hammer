@@ -460,7 +460,7 @@ public class HammerUtils
                 }
 
             }
-            logger.info("Adding connector of type" + connector.getClass().getName() + " to stream " +
+            logger.info("Adding connector of type " + connector.getClass().getName() + " to stream " +
                 ms.getFormat().getMediaType());
             ms.setConnector(connector);
             logger.info("Adding target of address " + pair.getRemoteCandidate().getTransportAddress() +
@@ -591,6 +591,7 @@ public class HammerUtils
             else if(setup.equals(DtlsControl.Setup.HOLDCONN))
                 returnedSetup = DtlsControl.Setup.HOLDCONN;
         }
+        logger.info("returnedSetup: " + returnedSetup);
         return returnedSetup;
     }
 

@@ -78,11 +78,11 @@ public class FakeUser implements StanzaListener
 
     /**
      * The <tt>Hammer</tt> instance to which this <tt>FakeUser</tt> corresponds
-     * This object layout exists in order to make conference initiation 
+     * This object layout exists in order to make conference initiation
      * synchronization bound to Hammer instance
      */
     private Hammer hammer;
-    
+
     /**
      * The XMPP server info to which this <tt>FakeUser</tt> will
      * communicate
@@ -163,7 +163,7 @@ public class FakeUser implements StanzaListener
     private final DtlsControl dtlsControl = new DtlsControlImpl();
 
     /**
-     * Construct the conference focus JID 
+     * Construct the conference focus JID
      * (or get one from the server info if provided)
      *
      * @return JID for the focus component
@@ -183,7 +183,7 @@ public class FakeUser implements StanzaListener
      * Instantiates a <tt>FakeUser</tt> with a default nickname that
      * will connect to the XMPP server contained in <tt>hostInfo</tt>.
      *
-     * @param hammer the <tt>Hammer</tt> instance to which this 
+     * @param hammer the <tt>Hammer</tt> instance to which this
      *               <tt>FakeUser</tt> belongs
      * @param mdc The <tt>MediaDeviceChooser</tt> that will be used by this
      * <tt>FakeUser</tt> to choose the <tt>MediaDevice</tt> for each of its
@@ -200,7 +200,7 @@ public class FakeUser implements StanzaListener
      * Instantiates a <tt>FakeUser</tt> with a specified <tt>nickname</tt>
      * that will connect to the XMPP server contained in <tt>hostInfo</tt>.
      *
-     * @param hammer the <tt>Hammer</tt> instance to which this 
+     * @param hammer the <tt>Hammer</tt> instance to which this
      *               <tt>FakeUser</tt> belongs
      * @param mdc The <tt>MediaDeviceChooser</tt> that will be used by this
      * <tt>FakeUser</tt> to choose the <tt>MediaDevice</tt> for each of its
@@ -222,7 +222,7 @@ public class FakeUser implements StanzaListener
      * Instantiates a <tt>FakeUser</tt> with a specified <tt>nickname</tt>
      * that will connect to the XMPP server contained in <tt>hostInfo</tt>.
      *
-     * @param hammer the <tt>Hammer</tt> instance to which this 
+     * @param hammer the <tt>Hammer</tt> instance to which this
      *               <tt>FakeUser</tt> belongs
      * @param mdc The <tt>MediaDeviceChooser</tt> that will be used by this
      * <tt>FakeUser</tt> to choose the <tt>MediaDevice</tt> for each of its
@@ -237,7 +237,7 @@ public class FakeUser implements StanzaListener
         String nickname,
         boolean smackDebug,
         boolean statisticsEnabled)
-    {   
+    {
         this.hammer = hammer;
         this.serverInfo = hammer.getServerInfo();
         this.mediaDeviceChooser = mdc;
@@ -276,8 +276,8 @@ public class FakeUser implements StanzaListener
                 NewContentPacketExtension.NAMESPACE,
                 new NewAbstractExtensionElementProvider<>(NewContentPacketExtension.class));
         ProviderManager.addExtensionProvider(
-                RtpDescriptionPacketExtension.ELEMENT_NAME,
-                RtpDescriptionPacketExtension.NAMESPACE,
+                NewRtpDescriptionPacketExtension.ELEMENT_NAME,
+                NewRtpDescriptionPacketExtension.NAMESPACE,
                 new NewAbstractExtensionElementProvider<>(NewRtpDescriptionPacketExtension.class));
         ProviderManager.addExtensionProvider(
                 NewPayloadTypePacketExtension.ELEMENT_NAME,
@@ -285,9 +285,9 @@ public class FakeUser implements StanzaListener
                 new NewAbstractExtensionElementProvider<>(NewPayloadTypePacketExtension.class));
         ProviderManager.addExtensionProvider(
                 NewParameterPacketExtension.ELEMENT_NAME,
-                "urn:xmpp:jingle:apps:rtp:1",
+                NewParameterPacketExtension.NAMESPACE,
                 new NewAbstractExtensionElementProvider<>(NewParameterPacketExtension.class));
-        ProviderManager.addExtensionProvider(
+        ProviderManager.addExtensionProvider(   // Charles ???
                 NewParameterPacketExtension.ELEMENT_NAME,
                 "urn:xmpp:jingle:apps:rtp:ssma:0",
                 new NewAbstractExtensionElementProvider<>(NewParameterPacketExtension.class));
@@ -327,6 +327,10 @@ public class FakeUser implements StanzaListener
                 NewSourceGroupPacketExtension.ELEMENT_NAME,
                 NewSourceGroupPacketExtension.NAMESPACE,
                 new NewAbstractExtensionElementProvider<>(NewSourceGroupPacketExtension.class));
+        ProviderManager.addExtensionProvider(
+                NewSctpMapExtension.ELEMENT_NAME,
+                NewSctpMapExtension.NAMESPACE,
+                new NewAbstractExtensionElementProvider<>(NewSctpMapExtension.class));
 
         connection = new XMPPBOSHConnection(config);
 
@@ -336,7 +340,7 @@ public class FakeUser implements StanzaListener
             public IQ handleIQRequest(IQ iq)
             {
                 NewJingleIQ jiq = (NewJingleIQ)iq;
-                System.out.println("iq request handler got jingle iq: " + jiq.toXML());
+                logger.info("iq request handler got jingle iq: " + jiq.toXML());
                 IQ result = IQ.createResultIQ(iq);
                 switch (jiq.getAction())
                 {
@@ -374,6 +378,7 @@ public class FakeUser implements StanzaListener
         discoManager.addFeature("urn:xmpp:jingle:apps:rtp:video");
         discoManager.addFeature("urn:ietf:rfc:5761"); //rtcp-mux
         discoManager.addFeature("urn:ietf:rfc:5888"); //bundle
+        discoManager.addFeature(NewSctpMapExtension.NAMESPACE);  // SCTP
 
         // added to address bosh timeout issues causing early termination of the hammer
         org.jivesoftware.smackx.ping.PingManager.getInstanceFor(connection).setPingInterval(15);
@@ -430,17 +435,17 @@ public class FakeUser implements StanzaListener
     }
 
     /**
-     * Invite the focus user to the <tt>MultiUserChat</tt> 
+     * Invite the focus user to the <tt>MultiUserChat</tt>
      * which this <tt>FakeUser</tt> is targeting
-     * 
+     *
      * @throws SmackException on connection errors
      * @throws  XMPPException on XMPP protocol errors
      * @throws  IOException on I/O errors
      */
-    private void inviteFocus() 
-            throws SmackException, XMPPException, IOException 
+    private void inviteFocus()
+            throws SmackException, XMPPException, IOException
     {
-        ConferenceInitiationIQ conferenceInitiationIQ 
+        ConferenceInitiationIQ conferenceInitiationIQ
                 = new ConferenceInitiationIQ();
         conferenceInitiationIQ.setTo(this.getFocusJID());
         conferenceInitiationIQ.setType(IQ.Type.set);
@@ -450,28 +455,28 @@ public class FakeUser implements StanzaListener
                         "channelLastN", this.conferenceInfo.getChannelLastN()));
         conferenceInitiationIQ.addConferenceProperty(
                 new ConferencePropertyPacketExtension(
-                        "adaptiveLastN", 
+                        "adaptiveLastN",
                         this.conferenceInfo.getAdaptiveLastN()));
         conferenceInitiationIQ.addConferenceProperty(
                 new ConferencePropertyPacketExtension(
                         "adaptiveSimulcast",
                         this.conferenceInfo.getAdaptiveSimulcast()));
         conferenceInitiationIQ.addConferenceProperty(
-                new ConferencePropertyPacketExtension("openSctp", 
+                new ConferencePropertyPacketExtension("openSctp",
                         this.conferenceInfo.getOpenSctp()));
         conferenceInitiationIQ.addConferenceProperty(
                 new ConferencePropertyPacketExtension(
-                        "startAudioMuted", 
+                        "startAudioMuted",
                         this.conferenceInfo.getStartAudioMuted()));
         conferenceInitiationIQ.addConferenceProperty(
                 new ConferencePropertyPacketExtension(
-                        "startVideoMuted", 
+                        "startVideoMuted",
                         this.conferenceInfo.getStartVideoMuted()));
         conferenceInitiationIQ.addConferenceProperty(
                 new ConferencePropertyPacketExtension(
-                        "simulcastMode", 
+                        "simulcastMode",
                         this.conferenceInfo.getSimulcastMode()));
-        try 
+        try
         {
             this.connection.sendStanza(conferenceInitiationIQ);
             this.hammer.setFocusInvited(true);
@@ -492,10 +497,10 @@ public class FakeUser implements StanzaListener
         {
             logger.warn("Interrupted while sending conference initiation iq: " + e.toString());
         }
-        
-        
+
+
     }
-    
+
     /**
      * Join the MUC, send a presence packet to display the current nickname
      * @throws XMPPException on XMPP protocol errors
@@ -526,16 +531,16 @@ public class FakeUser implements StanzaListener
                 connection.sendStanza(presencePacket);
 
                 /*
-                 * Make an attempt to send an IQ to Focus user 
+                 * Make an attempt to send an IQ to Focus user
                  * in order to enable Jingle for the conference
                  */
                 synchronized (this.hammer.getFocusInvitationSyncRoot())
                 {
-                    
+
                     if (!this.hammer.getFocusInvited()) {
                         inviteFocus();
                     }
-                    
+
                 }
             }
             catch (XMPPException.XMPPErrorException e)
@@ -663,6 +668,7 @@ public class FakeUser implements StanzaListener
             //TODO(brian): do we still need this special treatment for data?
             if (cpe.getName().equalsIgnoreCase("data"))
             {
+                logger.info("CharlesXXX Going to Add data channel");
                  localContent = HammerUtils.createDescriptionForDataContent(
                          NewContentPacketExtension.CreatorEnum.responder,
                          NewContentPacketExtension.SendersEnum.both);
@@ -704,7 +710,7 @@ public class FakeUser implements StanzaListener
          * FIXME
          * TODO(brian): do we still need to do this?
          */
-        contentMap.remove("data");
+        //contentMap.remove("data");
 
 
         IceMediaStreamGenerator iceMediaStreamGenerator = IceMediaStreamGenerator.getInstance();
@@ -783,6 +789,11 @@ public class FakeUser implements StanzaListener
         MediaPacketExtension mediaPacket = new MediaPacketExtension();
         for(String key : contentMap.keySet())
         {
+            if (key.equalsIgnoreCase("data")) {
+                logger.info("Charles: skip data type media");
+                continue;
+            }
+
             String str = String.valueOf(mediaStreamMap.get(key).getLocalSourceID());
             mediaPacket.addSource(
                 key,
@@ -793,7 +804,7 @@ public class FakeUser implements StanzaListener
 
         try
         {
-            System.out.println("Sending presence packet with ssrc: " + presencePacketWithSSRC.toXML());
+            logger.info("Sending presence packet with ssrc: " + presencePacketWithSSRC.toXML());
             connection.sendStanza(presencePacketWithSSRC);
             // Create the session-accept
             sessionAccept = new NewJingleIQ();
@@ -817,9 +828,12 @@ public class FakeUser implements StanzaListener
                 sessionAccept.getContentList(),
                 sessionInitiate.getContentList());
 
-            System.out.println("Sending session accept: " + sessionAccept.toXML());
+            logger.info("Before logSending session accept");
+            logger.info("Sending session accept: " + sessionAccept.toXML());
+            logger.info("After logSending session accept");
             // Send the session-accept IQ
             connection.sendStanza(sessionAccept);
+            logger.info("After Sending session accept");
             logger.info(
                     this.nickname + " : Jingle accept-session message sent");
         }
@@ -833,7 +847,12 @@ public class FakeUser implements StanzaListener
             logger.fatal("Interrupted while sending session accept: " + e.toString());
             System.exit(1);
         }
+        catch (Exception e)
+        {
+            logger.fatal("CharlesXXX General exception: " + e.toString());
+        }
 
+        logger.info("CharlesXXX syncRoot 0 ");
         // A listener to wake us up when the Agent enters a final state.
         final Object syncRoot = new Object();
         PropertyChangeListener propertyChangeListener
@@ -862,6 +881,7 @@ public class FakeUser implements StanzaListener
             }
         };
 
+        logger.info("CharlesXXX startConnectivityEst0 ");
         agent.addStateChangeListener(propertyChangeListener);
         agent.startConnectivityEstablishment();
 
@@ -908,6 +928,7 @@ public class FakeUser implements StanzaListener
             return;
         }
 
+        logger.info("CharlesXXX addSocketToMediaStream");
         // Add socket created by ice4j to their associated MediaStreams
         // We drop incoming RTP packets when statistics are disabled in order
         // to improve performance.
@@ -916,6 +937,7 @@ public class FakeUser implements StanzaListener
                                            fakeUserStats == null);
 
 
+        logger.info("CharlesXXX Start the encryption of the MediaStreams");
         //Start the encryption of the MediaStreams
         for(String key : contentMap.keySet())
         {
@@ -925,6 +947,7 @@ public class FakeUser implements StanzaListener
             control.start(type);
         }
 
+        logger.info("CharlesXXX Start MediaStreams");
         //Start the MediaStream
         for(String key : contentMap.keySet())
         {
@@ -935,7 +958,6 @@ public class FakeUser implements StanzaListener
             stream.start();
         }
     }
-
 
 
     /**

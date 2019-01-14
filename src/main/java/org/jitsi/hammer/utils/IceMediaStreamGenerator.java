@@ -37,12 +37,6 @@ public class IceMediaStreamGenerator
 {
     public static String STREAM_NAME = "muxed_stream";
     /**
-     * The static instance of the IceMediaStreamGenerator.
-     */
-    private static IceMediaStreamGenerator generator =
-            new IceMediaStreamGenerator();
-
-    /**
      * The minimum value that will be used as port when generating new
      * <tt>IceMediaStream</tt>.
      */
@@ -58,6 +52,12 @@ public class IceMediaStreamGenerator
      * <tt>IceMediaStream</tt>.
      */
     private int currentComponentPort = MIN_COMPONENT_PORT;
+
+    /**
+     * The static instance of the IceMediaStreamGenerator.
+     */
+    private static IceMediaStreamGenerator generator =
+            new IceMediaStreamGenerator();
 
 
     /**
@@ -79,6 +79,7 @@ public class IceMediaStreamGenerator
         MIN_COMPONENT_PORT = min_port;
         currentComponentPort = min_port;
         MAX_COMPONENT_PORT = max_port;
+        //System.out.println("In IceMediaStreamGenerator minport maxport cur=: " + currentComponentPort);
     }
 
     /**
