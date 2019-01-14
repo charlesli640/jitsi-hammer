@@ -26,7 +26,8 @@ import org.jivesoftware.smack.packet.*;
  * @author lishunyang
  * 
  */
-public class NewSctpMapExtension extends NewAbstractExtensionElement
+public class NewSctpMapExtension
+        extends NewAbstractExtensionElement
 {
     /**
      * The name of the "sctpmap" element.
@@ -69,6 +70,15 @@ public class NewSctpMapExtension extends NewAbstractExtensionElement
      * Number of "streams".
      */
     private int streams = -1;
+
+    /**
+     * Creates a new {@link NewSctpMapExtension} instance with the proper
+     * element name and namespace.
+     */
+    public NewSctpMapExtension()
+    {
+        super(ELEMENT_NAME, NAMESPACE);
+    }
 
     public NewSctpMapExtension(String elementName, String namespace) {
         super(elementName, namespace);

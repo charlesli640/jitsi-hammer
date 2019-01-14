@@ -18,6 +18,8 @@
 package net.java.sip.communicator.impl.protocol.jabber.extensions.jingle;
 
 
+import org.jitsi.util.Logger;
+
 /**
  * The Jingle "content" element contains the entire description of the session
  * being initiated. Among other things it contains details such as transport,
@@ -29,6 +31,12 @@ package net.java.sip.communicator.impl.protocol.jabber.extensions.jingle;
 public class NewContentPacketExtension
         extends NewAbstractExtensionElement
 {
+    /**
+     * The <tt>Logger</tt> used by the <tt>NewContentPacketExtension</tt> class and its
+     * instances for logging output.
+     */
+    private static final Logger logger
+            = Logger.getLogger(NewContentPacketExtension.class);
     /**
      * The name of the "content" element.
      */
@@ -148,6 +156,7 @@ public class NewContentPacketExtension
         super.setAttribute(NAME_ATTR_NAME, name);
         super.setAttribute(SENDERS_ATTR_NAME, senders);
         namespaceInherited = true;
+        logger.info("CharlesXXX: create content package: " + name);
     }
 
     /**
@@ -297,6 +306,7 @@ public class NewContentPacketExtension
     {
         return super.toXML();
     }
+
 
     @Override
     public String toString() {

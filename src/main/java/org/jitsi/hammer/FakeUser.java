@@ -285,7 +285,7 @@ public class FakeUser implements StanzaListener
                 new NewAbstractExtensionElementProvider<>(NewPayloadTypePacketExtension.class));
         ProviderManager.addExtensionProvider(
                 NewParameterPacketExtension.ELEMENT_NAME,
-                NewParameterPacketExtension.NAMESPACE,
+                "urn:xmpp:jingle:apps:rtp:1",
                 new NewAbstractExtensionElementProvider<>(NewParameterPacketExtension.class));
         ProviderManager.addExtensionProvider(   // Charles ???
                 NewParameterPacketExtension.ELEMENT_NAME,
@@ -331,7 +331,6 @@ public class FakeUser implements StanzaListener
                 NewSctpMapExtension.ELEMENT_NAME,
                 NewSctpMapExtension.NAMESPACE,
                 new NewAbstractExtensionElementProvider<>(NewSctpMapExtension.class));
-
         connection = new XMPPBOSHConnection(config);
 
         connection.registerIQRequestHandler(new AbstractIqRequestHandler(NewJingleIQ.ELEMENT_NAME, NewJingleIQ.NAMESPACE, IQ.Type.set, IQRequestHandler.Mode.sync)
@@ -339,6 +338,7 @@ public class FakeUser implements StanzaListener
             @Override
             public IQ handleIQRequest(IQ iq)
             {
+                logger.info("coming into handleIQRequest: " + iq.toXML());
                 NewJingleIQ jiq = (NewJingleIQ)iq;
                 logger.info("iq request handler got jingle iq: " + jiq.toXML());
                 IQ result = IQ.createResultIQ(iq);
@@ -381,7 +381,7 @@ public class FakeUser implements StanzaListener
         discoManager.addFeature(NewSctpMapExtension.NAMESPACE);  // SCTP
 
         // added to address bosh timeout issues causing early termination of the hammer
-        org.jivesoftware.smackx.ping.PingManager.getInstanceFor(connection).setPingInterval(15);
+        org.jivesoftware.smackx.ping.PingManager.getInstanceFor(connection).setPingInterval(60);
     }
 
     /**
@@ -538,7 +538,7 @@ public class FakeUser implements StanzaListener
                 {
 
                     if (!this.hammer.getFocusInvited()) {
-                        inviteFocus();
+                        //inviteFocus();
                     }
 
                 }
@@ -789,8 +789,9 @@ public class FakeUser implements StanzaListener
         MediaPacketExtension mediaPacket = new MediaPacketExtension();
         for(String key : contentMap.keySet())
         {
+            logger.info("CharlesXXX contentMap key: " + key);
             if (key.equalsIgnoreCase("data")) {
-                logger.info("Charles: skip data type media");
+                logger.info("CharlesXXX: skip data type media");
                 continue;
             }
 
@@ -966,8 +967,9 @@ public class FakeUser implements StanzaListener
      */
     public void processStanza(Stanza packet)
     {
+        logger.info("CharlesXXX Got Stanza packet: " + packet.toXML());
         NewJingleIQ jiq = (NewJingleIQ)packet;
-        System.out.println("Got jingle iq: " + jiq.toXML());
+        logger.info("CharlesXXX Got jingle iq: " + jiq.toXML());
         ackJingleIQ(jiq);
         switch(jiq.getAction())
         {
