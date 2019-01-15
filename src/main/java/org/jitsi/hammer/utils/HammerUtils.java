@@ -712,9 +712,9 @@ public class HammerUtils
     {
         NewContentPacketExtension content = new NewContentPacketExtension();
 
-        NewRtpDescriptionPacketExtension description = new NewRtpDescriptionPacketExtension();
-        description.setMedia("application");
-        content.addChildExtension(description);
+        //NewRtpDescriptionPacketExtension description = new NewRtpDescriptionPacketExtension();
+        //description.setMedia("application");
+        //content.addChildExtension(description);
 
         content.setCreator(creator);
         content.setName("data");

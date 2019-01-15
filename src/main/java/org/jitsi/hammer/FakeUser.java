@@ -963,9 +963,12 @@ public class FakeUser implements StanzaListener
         for(String key : contentMap.keySet())
         {
             MediaStream stream = mediaStreamMap.get(key);
-            SrtpControl control = stream.getSrtpControl();
-            MediaType type = stream.getFormat().getMediaType();
-            control.start(type);
+            if (stream != null) // in case data stream
+            {
+                SrtpControl control = stream.getSrtpControl();
+                MediaType type = stream.getFormat().getMediaType();
+                control.start(type);
+            }
         }
 
         logger.info("CharlesXXX Start MediaStreams");
@@ -973,10 +976,13 @@ public class FakeUser implements StanzaListener
         for(String key : contentMap.keySet())
         {
             MediaStream stream = mediaStreamMap.get(key);
-            logger.info("Starting media stream " + stream.getFormat().getMediaType() +
-                " with direction " + stream.getDirection() + " and srtpcontrol: " +
+            if (stream != null) // in case data stream
+            {
+                logger.info("Starting media stream " + stream.getFormat().getMediaType() +
+                    " with direction " + stream.getDirection() + " and srtpcontrol: " +
                     stream.getSrtpControl());
-            stream.start();
+                stream.start();
+            }
         }
     }
 
