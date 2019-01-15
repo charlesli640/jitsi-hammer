@@ -191,6 +191,14 @@ public class NewIceUdpTransportPacketExtension
         }
     }
 
+    public void removeAllCandidate()
+    {
+        synchronized (candidateList)
+        {
+            candidateList.clear();
+        }
+    }
+
     /**
      * Returns the list of {@link NewCandidatePacketExtension}s currently
      * registered with this transport.

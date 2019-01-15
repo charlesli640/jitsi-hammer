@@ -573,10 +573,13 @@ public class HammerUtils
     {
         NewIceUdpTransportPacketExtension transportRemote =
                 remoteContent.getFirstChildOfType(NewIceUdpTransportPacketExtension.class);
-        logger.info("CharlesXXX transportRemote != null toXML=" + transportRemote.toXML());
+        logger.info("CharlesXXX transportRemote toXML=" + transportRemote.toXML());
         NewIceUdpTransportPacketExtension transportLocal =
                 localContent.getFirstChildOfType(NewIceUdpTransportPacketExtension.class);
-        logger.info("CharlesXXX transportLocal != null toXML=" + transportLocal.toXML());
+
+        transportLocal.removeAllCandidate();
+
+        logger.info("CharlesXXX after clear child transportLocal toXML=" + transportLocal.toXML());
 
         if (transportRemote != null) {
             logger.info("CharlesXXX transportRemote != null");
