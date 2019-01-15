@@ -50,19 +50,20 @@ public class NewJingleUtils
     private static final Logger logger = Logger.getLogger(NewJingleUtils.class);
 
     /**
-     * Extracts and returns an {@link RtpDescriptionPacketExtension} provided
+     * Extracts and returns an {@link NewRtpDescriptionPacketExtension} provided
      * with <tt>content</tt> or <tt>null</tt> if there is none.
      *
      * @param content the media content that we'd like to extract the
-     * {@link RtpDescriptionPacketExtension} from.
+     * {@link NewRtpDescriptionPacketExtension} from.
      *
-     * @return an {@link RtpDescriptionPacketExtension} provided with
+     * @return an {@link NewRtpDescriptionPacketExtension} provided with
      * <tt>content</tt> or <tt>null</tt> if there is none.
      */
-    public static RtpDescriptionPacketExtension getRtpDescription(
-            ContentPacketExtension content)
+
+    public static NewRtpDescriptionPacketExtension getRtpDescription(
+            NewContentPacketExtension content)
     {
-        return content.getFirstChildOfType(RtpDescriptionPacketExtension.class);
+        return content.getFirstChildOfType(NewRtpDescriptionPacketExtension.class);
     }
 
     /**
@@ -245,7 +246,7 @@ public class NewJingleUtils
      * <tt>extMap</tt>. The method returns an empty list in case there were no
      * <tt>extmap</tt> advertisements in <tt>desc</tt>.
      *
-     * @param desc the {@link RtpDescriptionPacketExtension} that we'd like to
+     * @param desc the {@link NewRtpDescriptionPacketExtension} that we'd like to
      * probe for a list of {@link RTPExtension}s
      * @param extMap a reference to the <tt>DynamicRTPExtensionsRegistry</tt>
      * where we should be registering newly added extension mappings.
@@ -580,10 +581,11 @@ public class NewJingleUtils
         description.setMedia(formats.get(0).getMediaType().toString());
 
         //now fill in the RTP description
-        for(MediaFormat fmt : formats)
-        {
-            description.addPayloadType(
-                    formatToPayloadType(fmt, dynamicPayloadTypes));
+        if(formats != null && formats.size() > 0) {
+            for (MediaFormat fmt : formats) {
+                description.addPayloadType(
+                        formatToPayloadType(fmt, dynamicPayloadTypes));
+            }
         }
 
         // extmap attributes
@@ -674,7 +676,8 @@ public class NewJingleUtils
      * in the <tt>content</tt>'s <tt>description</tt>, if any.
      * <tt>contentName</tt>
      */
-    public static MediaType getMediaType(ContentPacketExtension content)
+
+    public static MediaType getMediaType(NewContentPacketExtension content)
     {
         if (content == null)
             return null;
@@ -683,7 +686,7 @@ public class NewJingleUtils
         // if no RTP description is present(SCTP connection case)
         String mediaTypeName = content.getName();
 
-        RtpDescriptionPacketExtension desc = getRtpDescription(content);
+        NewRtpDescriptionPacketExtension desc = getRtpDescription(content);
         if (desc != null)
         {
             String rtpMedia = desc.getMedia().toLowerCase();

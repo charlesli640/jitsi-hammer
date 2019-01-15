@@ -15,6 +15,7 @@
  */
 package org.jitsi.hammer;
 
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.*;
 import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.JingleProvider;
 import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.NewAbstractExtensionElementProvider;
@@ -338,7 +339,7 @@ public class FakeUser implements StanzaListener
             @Override
             public IQ handleIQRequest(IQ iq)
             {
-                logger.info("coming into handleIQRequest: " + iq.toXML());
+                logger.info("CharlesXXX: coming into handleIQRequest: " + iq.toXML());
                 NewJingleIQ jiq = (NewJingleIQ)iq;
                 logger.info("iq request handler got jingle iq: " + jiq.toXML());
                 IQ result = IQ.createResultIQ(iq);
@@ -668,17 +669,21 @@ public class FakeUser implements StanzaListener
         DynamicRTPExtensionsRegistry rtpExtRegistry =
                 new DynamicRTPExtensionsRegistry();
 
+        NewContentPacketExtension remoteDataContentExtension = null;
+        NewContentPacketExtension localDataContentExtension = null;
+
         for (NewContentPacketExtension cpe : sessionInitiate.getContentList())
         {
             NewContentPacketExtension localContent;
             //TODO(brian): do we still need this special treatment for data?
-            if (cpe.getName().equalsIgnoreCase("data"))
-            {
+            if (cpe.getName().equalsIgnoreCase("data")) {
                 logger.info("CharlesXXX Going to Add data channel");
-                 localContent = HammerUtils.createDescriptionForDataContent(
-                         NewContentPacketExtension.CreatorEnum.responder,
-                         NewContentPacketExtension.SendersEnum.both,
-                         cpe);
+                localContent = HammerUtils.createDescriptionForDataContent(
+                        NewContentPacketExtension.CreatorEnum.responder,
+                        NewContentPacketExtension.SendersEnum.both,
+                        cpe);
+                remoteDataContentExtension = cpe;
+                localDataContentExtension = localContent;
             }
             else
             {
@@ -796,7 +801,7 @@ public class FakeUser implements StanzaListener
         MediaPacketExtension mediaPacket = new MediaPacketExtension();
         for(String key : contentMap.keySet())
         {
-            logger.info("CharlesXXX contentMap key: " + key);
+            //logger.info("CharlesXXX contentMap key: " + key);
             if (key.equalsIgnoreCase("data")) {
                 logger.info("CharlesXXX: skip data type media");
                 continue;
@@ -835,6 +840,12 @@ public class FakeUser implements StanzaListener
                 dtlsControl,
                 sessionAccept.getContentList(),
                 sessionInitiate.getContentList());
+
+            // for data
+            if(localDataContentExtension != null && remoteDataContentExtension != null) {
+                logger.info("CharlesXXX setDataSctpmap");
+                HammerUtils.setDataSctpmap(localDataContentExtension, remoteDataContentExtension);
+            }
 
             //logger.info("Before logSending session accept");
             logger.info("Sending session accept: " + sessionAccept.toXML());
@@ -904,13 +915,12 @@ public class FakeUser implements StanzaListener
                         || IceProcessingState.FAILED.equals(iceState))
                     break;
 
-                if (System.currentTimeMillis() - startWait > ICE_TIMEOUT_MS)
-		{
-		    logger.error("ICE for user " + nickname + " is still in " +
-			iceState + " state after " + ICE_TIMEOUT_MS + " ms, " +
-                        "giving up");
+                if (System.currentTimeMillis() - startWait > ICE_TIMEOUT_MS) {
+                    logger.error("ICE for user " + nickname + " is still in " +
+                            iceState + " state after " + ICE_TIMEOUT_MS + " ms, " +
+                            "giving up");
                     break;
-		}
+                }
 
                 try
                 {
@@ -925,9 +935,11 @@ public class FakeUser implements StanzaListener
             while (true);
         }
 
+        logger.info("CharlesXXX removeStateChangeListener ");
         agent.removeStateChangeListener(propertyChangeListener);
 
         IceProcessingState iceState = agent.getState();
+        logger.info("CharlesXXX iceState=" + iceState);
         if (!IceProcessingState.COMPLETED.equals(iceState)
                 && !IceProcessingState.TERMINATED.equals(iceState))
         {

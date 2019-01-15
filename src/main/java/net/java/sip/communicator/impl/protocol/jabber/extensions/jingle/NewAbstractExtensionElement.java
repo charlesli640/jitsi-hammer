@@ -141,7 +141,7 @@ public abstract class NewAbstractExtensionElement
             // Child elements, if any
             for (Element e : childElements)
             {
-                logger.info("CharlesXXX childElement: " + e);
+                //logger.info("CharlesXXX childElement: " + e);
                 xmlBuilder.element(e);
             }
 

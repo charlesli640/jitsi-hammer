@@ -115,16 +115,16 @@ public class NewAbstractExtensionElementProvider<C extends NewAbstractExtensionE
                 }
                 else
                 {
-                    if (elementName.equals(NewSctpMapExtension.ELEMENT_NAME)) {
-                        logger.info("CharlesXXX elementName: " + elementName);
-                        logger.info("CharlesXXX provider class: " + provider.getClass().getName());
-                    }
+                    //if (elementName.equals(NewSctpMapExtension.ELEMENT_NAME)) {
+                    //    logger.info("CharlesXXX elementName: " + elementName);
+                    //    logger.info("CharlesXXX provider class: " + provider.getClass().getName());
+                    //}
                     Element childExtension = provider.parse(parser);
                     packetExtension.addChildExtension(childExtension);
-                    if (elementName.equals(NewSctpMapExtension.ELEMENT_NAME)) {
-                        logger.info("CharlesXXX childExtension: " + childExtension.toXML());
-                        logger.info("CharlesXXX packetExtension: " + packetExtension.toXML());
-                    }
+                    //if (elementName.equals(NewSctpMapExtension.ELEMENT_NAME)) {
+                    //    logger.info("CharlesXXX childExtension: " + childExtension.toXML());
+                    //    logger.info("CharlesXXX packetExtension: " + packetExtension.toXML());
+                    //}
                 }
             }
             if (eventType == XmlPullParser.END_TAG)

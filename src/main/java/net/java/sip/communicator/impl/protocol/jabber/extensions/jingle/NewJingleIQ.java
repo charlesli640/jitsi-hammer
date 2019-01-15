@@ -106,9 +106,7 @@ public class NewJingleIQ extends IQ
         xml.rightAngleBracket();
         for (NewContentPacketExtension cpe : contentList)
         {
-            //logger.info("NewContentPackageExtension: " + cpe);
-            logger.info("NewContentPackageExtension: " + cpe.toString());
-            logger.info("NewContentPackageExtension: " + cpe.toXML());
+            logger.info("CharlesXXX NewContentPackageExtension: " + cpe.toXML());
             xml.element(cpe);
         }
         if (reason != null)

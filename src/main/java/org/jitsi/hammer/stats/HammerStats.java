@@ -186,7 +186,7 @@ public class HammerStats implements Runnable
             threadStop = false;
         }
 
-        logger.info("Running the main loop");
+        logger.info("HammerStats: Running the main loop");
         while (!threadStop)
         {
             synchronized(this)

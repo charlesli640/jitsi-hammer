@@ -496,7 +496,6 @@ public class HammerUtils
         List<NewDtlsFingerprintPacketExtension> fingerprints = null;
         DtlsControl.Setup dtlsSetup = null;
 
-
         for(NewContentPacketExtension remoteContent : remoteContentList)
         {
             transport = remoteContent.getFirstChildOfType(NewIceUdpTransportPacketExtension.class);
@@ -567,6 +566,30 @@ public class HammerUtils
                 transport.addChildExtension(fingerprint);
                 break; //bundling
             }
+        }
+    }
+
+    public static void setDataSctpmap(NewContentPacketExtension localContent, NewContentPacketExtension remoteContent)
+    {
+        NewIceUdpTransportPacketExtension transportRemote =
+                remoteContent.getFirstChildOfType(NewIceUdpTransportPacketExtension.class);
+        logger.info("CharlesXXX transportRemote != null toXML=" + transportRemote.toXML());
+        NewIceUdpTransportPacketExtension transportLocal =
+                localContent.getFirstChildOfType(NewIceUdpTransportPacketExtension.class);
+        logger.info("CharlesXXX transportLocal != null toXML=" + transportLocal.toXML());
+
+        if (transportRemote != null) {
+            logger.info("CharlesXXX transportRemote != null");
+            NewSctpMapExtension sctpmap = transportRemote.getFirstChildOfType(NewSctpMapExtension.class);
+            if (sctpmap != null) {
+                logger.info("CharlesXXX sctpmap != null");
+                transportLocal.addChildExtension(sctpmap);
+            } else {
+                logger.info("CharlesXXX no sctpmap");
+            }
+
+        } else {
+            logger.info("CharlesXXX no transport");
         }
     }
 
@@ -684,23 +707,17 @@ public class HammerUtils
         SendersEnum                  senders,
         NewContentPacketExtension    cpe)
     {
-        NewContentPacketExtension content = cpe;//new NewContentPacketExtension();
+        NewContentPacketExtension content = new NewContentPacketExtension();
 
-        NewRtpDescriptionPacketExtension description
-                = content.getFirstChildOfType(NewRtpDescriptionPacketExtension.class);
-        if (description != null) {
-            description.setMedia("application");
-        } else {
-            description = new NewRtpDescriptionPacketExtension();
-            description.setMedia("application");
-            content.addChildExtension(description);
-        }
+        NewRtpDescriptionPacketExtension description = new NewRtpDescriptionPacketExtension();
+        description.setMedia("application");
+        content.addChildExtension(description);
 
         content.setCreator(creator);
         content.setName("data");
 
         //senders - only if we have them and if they are different from default
-        if(senders != null && senders != SendersEnum.both)
+        if (senders != null && senders != SendersEnum.both)
             content.setSenders(senders);
 
         return content;
