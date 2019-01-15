@@ -17,6 +17,7 @@
  */
 package net.java.sip.communicator.impl.protocol.jabber.extensions.jingle;
 
+import org.jitsi.util.Logger;
 import org.jivesoftware.smack.packet.*;
 
 /**
@@ -29,6 +30,13 @@ import org.jivesoftware.smack.packet.*;
 public class NewSctpMapExtension
         extends NewAbstractExtensionElement
 {
+    /**
+     * The <tt>Logger</tt> used by the <tt>NewSctpMapExtension</tt> class and its
+     * instances for logging output.
+     */
+    private static final Logger logger
+            = Logger.getLogger(NewSctpMapExtension.class);
+
     /**
      * The name of the "sctpmap" element.
      */
@@ -105,9 +113,11 @@ public class NewSctpMapExtension
     /**
      * {@inheritDoc}
      */
+    /*
     @Override
     public String toXML()
     {
+        logger.info("CahrlesXXX NewSctpMapExtension toXML port=" + port + " protocol=" + protocol + " streams+" + streams );
         StringBuilder builder = new StringBuilder();
 
         builder.append("<").append(getElementName());
@@ -122,40 +132,47 @@ public class NewSctpMapExtension
         builder.append("/>");
 
         return builder.toString();
-    }
+    }*/
 
     public void setPort(int port)
     {
+        super.setAttribute(PORT_ATTR_NAME, protocol);
         this.port = port;
     }
 
     public int getPort()
     {
+        port = super.getAttributeAsInt(PORT_ATTR_NAME);
         return port;
     }
 
     public void setProtocol(String protocol)
     {
+        super.setAttribute(PROTOCOL_ATTR_NAME, protocol);
         this.protocol = protocol;
     }
 
     public void setProtocol(Protocol protocol)
     {
+        super.setAttribute(PROTOCOL_ATTR_NAME, protocol.toString());
         this.protocol = protocol.toString();
     }
 
     public String getProtocol()
     {
+        protocol = super.getAttributeAsString(PROTOCOL_ATTR_NAME);
         return protocol;
     }
 
     public void setStreams(int streams)
     {
+        super.setAttribute(STREAMS_ATTR_NAME, streams);
         this.streams = streams;
     }
 
     public int getStreams()
     {
+        streams = super.getAttributeAsInt(STREAMS_ATTR_NAME);
         return streams;
     }
 

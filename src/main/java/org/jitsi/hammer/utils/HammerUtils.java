@@ -684,8 +684,8 @@ public class HammerUtils
         SendersEnum                  senders)
     {
         NewContentPacketExtension content = new NewContentPacketExtension();
-        RtpDescriptionPacketExtension description
-        = new RtpDescriptionPacketExtension();
+        NewRtpDescriptionPacketExtension description
+        = new NewRtpDescriptionPacketExtension();
 
 
         content.setCreator(creator);

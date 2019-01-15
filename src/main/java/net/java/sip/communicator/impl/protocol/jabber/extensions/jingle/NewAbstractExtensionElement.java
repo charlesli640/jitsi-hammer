@@ -1,5 +1,6 @@
 package net.java.sip.communicator.impl.protocol.jabber.extensions.jingle;
 
+import org.jitsi.util.Logger;
 import org.jivesoftware.smack.packet.Element;
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.NamedElement;
@@ -21,6 +22,12 @@ import java.util.stream.Collectors;
 public abstract class NewAbstractExtensionElement
     implements ExtensionElement
 {
+    /**
+     * The <tt>Logger</tt> used by the <tt>NewJingleIQ</tt> class and its
+     * instances for logging output.
+     */
+    private static final Logger logger
+            = Logger.getLogger(NewAbstractExtensionElement.class);
     /**
      * The name space of this packet extension. Should remain <tt>null</tt> if
      * there's no namespace associated with this element.
@@ -134,6 +141,7 @@ public abstract class NewAbstractExtensionElement
             // Child elements, if any
             for (Element e : childElements)
             {
+                logger.info("CharlesXXX childElement: " + e);
                 xmlBuilder.element(e);
             }
 
