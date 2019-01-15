@@ -349,6 +349,7 @@ public class FakeUser implements StanzaListener
                         logger.info("Received session-initiate");
                         sessionInitiate = jiq;
                         acceptJingleSession();
+                        break;
 
                     case ADDSOURCE:
                         logger.info("CharlesXXX no handling for addsource for now");
