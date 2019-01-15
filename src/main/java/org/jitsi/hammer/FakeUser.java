@@ -348,6 +348,12 @@ public class FakeUser implements StanzaListener
                         logger.info("Received session-initiate");
                         sessionInitiate = jiq;
                         acceptJingleSession();
+
+                    case ADDSOURCE:
+                        logger.info("CharlesXXX no handling for addsource for now");
+                        break;
+
+
                 }
                 return result;
             }
@@ -368,12 +374,12 @@ public class FakeUser implements StanzaListener
 
         ServiceDiscoveryManager discoManager =
             ServiceDiscoveryManager.getInstanceFor(connection);
-        discoManager.addFeature(JingleIQ.NAMESPACE);
-        discoManager.addFeature(RtpDescriptionPacketExtension.NAMESPACE);
-        discoManager.addFeature(RawUdpTransportPacketExtension.NAMESPACE);
-        discoManager.addFeature(IceUdpTransportPacketExtension.NAMESPACE);
-        discoManager.addFeature(DtlsFingerprintPacketExtension.NAMESPACE);
-        discoManager.addFeature(RTPHdrExtPacketExtension.NAMESPACE);
+        discoManager.addFeature(NewJingleIQ.NAMESPACE);
+        discoManager.addFeature(NewRtpDescriptionPacketExtension.NAMESPACE);
+        discoManager.addFeature(NewRawUdpTransportPacketExtension.NAMESPACE);
+        discoManager.addFeature(NewIceUdpTransportPacketExtension.NAMESPACE);
+        discoManager.addFeature(NewDtlsFingerprintPacketExtension.NAMESPACE);
+        discoManager.addFeature(NewRTPHdrExtPacketExtension.NAMESPACE);
         discoManager.addFeature("urn:xmpp:jingle:apps:rtp:audio");
         discoManager.addFeature("urn:xmpp:jingle:apps:rtp:video");
         discoManager.addFeature("urn:ietf:rfc:5761"); //rtcp-mux
@@ -381,7 +387,7 @@ public class FakeUser implements StanzaListener
         discoManager.addFeature(NewSctpMapExtension.NAMESPACE);  // SCTP
 
         // added to address bosh timeout issues causing early termination of the hammer
-        org.jivesoftware.smackx.ping.PingManager.getInstanceFor(connection).setPingInterval(60);
+        org.jivesoftware.smackx.ping.PingManager.getInstanceFor(connection).setPingInterval(15);
     }
 
     /**
@@ -671,7 +677,8 @@ public class FakeUser implements StanzaListener
                 logger.info("CharlesXXX Going to Add data channel");
                  localContent = HammerUtils.createDescriptionForDataContent(
                          NewContentPacketExtension.CreatorEnum.responder,
-                         NewContentPacketExtension.SendersEnum.both);
+                         NewContentPacketExtension.SendersEnum.both,
+                         cpe);
             }
             else
             {
@@ -829,12 +836,12 @@ public class FakeUser implements StanzaListener
                 sessionAccept.getContentList(),
                 sessionInitiate.getContentList());
 
-            logger.info("Before logSending session accept");
+            //logger.info("Before logSending session accept");
             logger.info("Sending session accept: " + sessionAccept.toXML());
-            logger.info("After logSending session accept");
+            //logger.info("After logSending session accept");
             // Send the session-accept IQ
             connection.sendStanza(sessionAccept);
-            logger.info("After Sending session accept");
+            //logger.info("After Sending session accept");
             logger.info(
                     this.nickname + " : Jingle accept-session message sent");
         }
@@ -990,7 +997,7 @@ public class FakeUser implements StanzaListener
             logger.info(this.nickname + " : Jingle addsource received");
             break;
         case REMOVESOURCE:
-            logger.info(this.nickname + " : Jingle addsource received");
+            logger.info(this.nickname + " : Jingle removesource received");
             break;
         default:
             logger.info(this.nickname + " : Unknown Jingle IQ received : "

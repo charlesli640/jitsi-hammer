@@ -681,12 +681,20 @@ public class HammerUtils
      */
     public static NewContentPacketExtension createDescriptionForDataContent(
         CreatorEnum                  creator,
-        SendersEnum                  senders)
+        SendersEnum                  senders,
+        NewContentPacketExtension    cpe)
     {
-        NewContentPacketExtension content = new NewContentPacketExtension();
-        NewRtpDescriptionPacketExtension description
-        = new NewRtpDescriptionPacketExtension();
+        NewContentPacketExtension content = cpe;//new NewContentPacketExtension();
 
+        NewRtpDescriptionPacketExtension description
+                = content.getFirstChildOfType(NewRtpDescriptionPacketExtension.class);
+        if (description != null) {
+            description.setMedia("application");
+        } else {
+            description = new NewRtpDescriptionPacketExtension();
+            description.setMedia("application");
+            content.addChildExtension(description);
+        }
 
         content.setCreator(creator);
         content.setName("data");
@@ -694,10 +702,6 @@ public class HammerUtils
         //senders - only if we have them and if they are different from default
         if(senders != null && senders != SendersEnum.both)
             content.setSenders(senders);
-
-        description.setMedia("data");
-        //RTP description
-        content.addChildExtension(description);
 
         return content;
     }
