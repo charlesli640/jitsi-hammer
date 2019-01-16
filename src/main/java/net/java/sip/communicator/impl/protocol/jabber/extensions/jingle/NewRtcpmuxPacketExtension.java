@@ -26,7 +26,7 @@ public class NewRtcpmuxPacketExtension
         extends NewAbstractExtensionElement
 {
     /**
-     * The name of the "encryption" element.
+     * The name of the element.
      */
     public static final String ELEMENT_NAME = "rtcp-mux";
 
@@ -36,6 +36,7 @@ public class NewRtcpmuxPacketExtension
     public NewRtcpmuxPacketExtension()
     {
         super(ELEMENT_NAME, null);
+        namespaceInherited = true;
     }
 }
 

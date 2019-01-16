@@ -40,12 +40,12 @@ public class IceMediaStreamGenerator
      * The minimum value that will be used as port when generating new
      * <tt>IceMediaStream</tt>.
      */
-    private static int MIN_COMPONENT_PORT = 6000;
+    private static int MIN_COMPONENT_PORT = 16000;
     /**
      * The maximum value that will be used as port when generating new
      * <tt>IceMediaStream</tt>.
      */
-    private static int MAX_COMPONENT_PORT = 9000;
+    private static int MAX_COMPONENT_PORT = 19000;
 
     /**
      * The current value that will be used as port when generating new

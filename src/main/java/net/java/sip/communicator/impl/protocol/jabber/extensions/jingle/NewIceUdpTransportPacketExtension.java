@@ -235,6 +235,7 @@ public class NewIceUdpTransportPacketExtension
         return remoteCandidate;
     }
 
+    //public NewRtcpmuxPacketExtension getRtcpmux() { return rtcpmux; }
     /**
      * Tries to determine whether  <tt>childExtension</tt> is a {@link
      * NewCandidatePacketExtension}, a {@link NewRemoteCandidatePacketExtension} or
@@ -275,6 +276,10 @@ public class NewIceUdpTransportPacketExtension
             }
         }
         return false;
+    }
+
+    public void setRtcpmux() {
+        addChildExtension(new NewRtcpmuxPacketExtension());
     }
 
     /**

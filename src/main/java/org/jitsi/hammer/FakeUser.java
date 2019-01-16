@@ -344,6 +344,15 @@ public class FakeUser implements StanzaListener
                 NewContentPacketExtension.ELEMENT_NAME,
                 NewGroupExtensionElement.NAMESPACE,
                 new NewAbstractExtensionElementProvider<>(NewContentPacketExtension.class));
+        ProviderManager.addExtensionProvider(
+                NewRtcpmuxPacketExtension.ELEMENT_NAME,
+                NewRtpDescriptionPacketExtension.NAMESPACE,
+                new NewAbstractExtensionElementProvider<>(NewRtcpmuxPacketExtension.class));
+        ProviderManager.addExtensionProvider(
+                NewRtcpmuxPacketExtension.ELEMENT_NAME,
+                NewIceUdpTransportPacketExtension.NAMESPACE,
+                new NewAbstractExtensionElementProvider<>(NewRtcpmuxPacketExtension.class));
+
 
 
 
@@ -732,7 +741,14 @@ public class FakeUser implements StanzaListener
                         rtpExtensionIntersection,
                         ptRegistry,
                         rtpExtRegistry);
+
+                NewRtcpmuxPacketExtension rtcpmux = description.getRtcpmux();
+                if(rtcpmux != null) {
+                    logger.info("CharlesXXX add rtcp-mux");
+                    localContent.addChildExtension(rtcpmux);
+                }
             }
+
             if(localContent != null)
                 contentMap.put(cpe.getName(), localContent);
         }
@@ -870,6 +886,9 @@ public class FakeUser implements StanzaListener
                 logger.info("CharlesXXX setDataSctpmap");
                 HammerUtils.setDataSctpmap(localDataContentExtension, remoteDataContentExtension);
             }
+
+            // for rctp-mux in transport
+
 
             //logger.info("Before logSending session accept");
             logger.info("Sending session accept: " + sessionAccept.toXML());

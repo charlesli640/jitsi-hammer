@@ -19,6 +19,7 @@ package net.java.sip.communicator.impl.protocol.jabber.extensions.jingle;
 
 import java.util.*;
 
+import org.jitsi.util.Logger;
 import org.jivesoftware.smack.packet.*;
 
 /**
@@ -30,6 +31,8 @@ import org.jivesoftware.smack.packet.*;
 public class NewRtpDescriptionPacketExtension
         extends NewAbstractExtensionElement
 {
+    private static final Logger logger
+            = Logger.getLogger(NewRtpDescriptionPacketExtension.class);
     /**
      * The name space for RTP description elements.
      */
@@ -75,6 +78,7 @@ public class NewRtpDescriptionPacketExtension
     private List<NewRTPHdrExtPacketExtension> extmapList
             = new ArrayList<NewRTPHdrExtPacketExtension>();
 
+    private NewRtcpmuxPacketExtension rtcpmux;
     /**
      * The combined list of all child elements that this extension contains.
      */
@@ -194,6 +198,9 @@ public class NewRtpDescriptionPacketExtension
         if (bandwidth != null)
             children.add(bandwidth);
 
+        if(rtcpmux != null)
+            children.add(rtcpmux);
+
         //extmap elements
         if (extmapList != null)
             children.addAll(extmapList);
@@ -221,6 +228,10 @@ public class NewRtpDescriptionPacketExtension
         else if (childExtension instanceof NewBandwidthPacketExtension)
             this.setBandwidth((NewBandwidthPacketExtension)childExtension);
 
+        else if (childExtension instanceof NewRtcpmuxPacketExtension) {
+            logger.info("CharlesXXX addChildExtension: NewRtcpmuxPacketExtension");
+            this.setRtcpmux((NewRtcpmuxPacketExtension) childExtension);
+        }
         else if (childExtension instanceof NewRTPHdrExtPacketExtension)
             this.addExtmap((NewRTPHdrExtPacketExtension)childExtension);
         else
@@ -274,6 +285,10 @@ public class NewRtpDescriptionPacketExtension
     {
         return bandwidth;
     }
+
+    public void setRtcpmux(NewRtcpmuxPacketExtension rtcpmux) {this.rtcpmux = rtcpmux; }
+
+    public NewRtcpmuxPacketExtension getRtcpmux() { return rtcpmux; }
 
     /**
      * Adds an optional <tt>extmap</tt> element that allows negotiation RTP

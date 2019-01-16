@@ -26,7 +26,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>ice4j</artifactId>
-            <version>2.0-20170410.185542-12</version>
+            <version>2.0.0-20181213.100259-20</version>
         </dependency>
         <dependency>
             <groupId>org.igniterealtime.smack</groupId>
@@ -119,6 +119,11 @@
                 <version>1.4.0</version>
                 <configuration>
                     <mainClass>org.jitsi.hammer.Main</mainClass>
+                       <additionalClasspathElements>
+                        <additionalClasspathElement>
+                            /Users/czli/.m2/repository/org/jitsi/jitsi-lgpl-dependencies/1.1-SNAPSHOT/jitsi-lgpl-dependencies-1.1-SNAPSHOT.jar
+                        </additionalClasspathElement>
+                    </additionalClasspathElements>
                 </configuration>
             </plugin>
         </plugins>
