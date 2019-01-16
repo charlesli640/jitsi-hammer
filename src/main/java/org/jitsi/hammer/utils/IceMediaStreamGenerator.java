@@ -36,11 +36,6 @@ import java.io.*;
 public class IceMediaStreamGenerator
 {
     public static String STREAM_NAME = "muxed_stream";
-    /**
-     * The static instance of the IceMediaStreamGenerator.
-     */
-    private static IceMediaStreamGenerator generator =
-            new IceMediaStreamGenerator();
 
     /**
      * The minimum value that will be used as port when generating new
@@ -59,6 +54,11 @@ public class IceMediaStreamGenerator
      */
     private int currentComponentPort = MIN_COMPONENT_PORT;
 
+    /**
+     * The static instance of the IceMediaStreamGenerator.
+     */
+    private static IceMediaStreamGenerator generator =
+            new IceMediaStreamGenerator();
 
     /**
      * Initializes a new <tt>IceMediaStream</tt> instance with
