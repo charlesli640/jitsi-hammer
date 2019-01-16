@@ -61,7 +61,7 @@ public class NewParameterPacketExtension
     public NewParameterPacketExtension(String name, String value)
     {
         super(ELEMENT_NAME, NAMESPACE);
-        namespaceInherited = true;
+        namespaceInherited = true;  // if namespace is derived, actually it doesn't have xmlns attr
         setName(name);
         setValue(value);
     }

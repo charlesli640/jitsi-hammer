@@ -156,7 +156,6 @@ public class NewContentPacketExtension
         super.setAttribute(NAME_ATTR_NAME, name);
         super.setAttribute(SENDERS_ATTR_NAME, senders);
         namespaceInherited = true;
-        //logger.info("CharlesXXX: create content package: " + name);
     }
 
     /**

@@ -83,6 +83,8 @@ public class NewJingleIQ extends IQ
     private final List<NewContentPacketExtension> contentList
             = new ArrayList<>();
 
+    private NewGroupExtensionElement group;
+
     public NewJingleIQ()
     {
         super(ELEMENT_NAME, NAMESPACE);
@@ -112,6 +114,10 @@ public class NewJingleIQ extends IQ
         if (reason != null)
         {
             xml.element(reason);
+        }
+        if (group != null)
+        {
+            xml.element(group);
         }
         //xml.closeElement(ELEMENT_NAME);
 
@@ -162,6 +168,9 @@ public class NewJingleIQ extends IQ
         this.reason = reason;
     }
 
+    public void setGroup(NewGroupExtensionElement group) { this.group = group; }
+
+    public NewGroupExtensionElement getGroup() { return this.group; }
     /**
      * Returns this IQ's <tt>reason</tt> extension. The <tt>reason</tt>
      * extension in a <tt>jingle</tt> IQ provides machine and possibly human

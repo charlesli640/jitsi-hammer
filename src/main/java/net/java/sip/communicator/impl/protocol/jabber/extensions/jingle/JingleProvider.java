@@ -16,6 +16,7 @@
 
 package net.java.sip.communicator.impl.protocol.jabber.extensions.jingle;
 
+import org.jitsi.util.Logger;
 import org.jivesoftware.smack.packet.Element;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.provider.IntrospectionProvider;
@@ -32,6 +33,8 @@ import java.io.IOException;
  */
 public class JingleProvider extends IntrospectionProvider.IQIntrospectionProvider<NewJingleIQ>
 {
+    private static final Logger logger
+            = Logger.getLogger(JingleProvider.class);
 
     public JingleProvider()
     {
@@ -70,6 +73,11 @@ public class JingleProvider extends IntrospectionProvider.IQIntrospectionProvide
                         if (child instanceof NewContentPacketExtension)
                         {
                             jingleIQ.addContent((NewContentPacketExtension)child);
+                        }
+                        else if (child instanceof  NewGroupExtensionElement)
+                        {
+                            logger.info("CharlesXXX parse group");
+                            jingleIQ.setGroup((NewGroupExtensionElement) child);
                         }
                         else
                         {

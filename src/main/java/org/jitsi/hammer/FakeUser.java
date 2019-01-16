@@ -274,7 +274,7 @@ public class FakeUser implements StanzaListener
                 new ConferenceInitiationIQProvider());
         ProviderManager.addExtensionProvider(
                 NewContentPacketExtension.ELEMENT_NAME,
-                NewContentPacketExtension.NAMESPACE,
+                NewJingleIQ.NAMESPACE,
                 new NewAbstractExtensionElementProvider<>(NewContentPacketExtension.class));
         ProviderManager.addExtensionProvider(
                 NewRtpDescriptionPacketExtension.ELEMENT_NAME,
@@ -286,9 +286,9 @@ public class FakeUser implements StanzaListener
                 new NewAbstractExtensionElementProvider<>(NewPayloadTypePacketExtension.class));
         ProviderManager.addExtensionProvider(
                 NewParameterPacketExtension.ELEMENT_NAME,
-                "urn:xmpp:jingle:apps:rtp:1",
+                NewParameterPacketExtension.NAMESPACE,
                 new NewAbstractExtensionElementProvider<>(NewParameterPacketExtension.class));
-        ProviderManager.addExtensionProvider(   // Charles ???
+        ProviderManager.addExtensionProvider(
                 NewParameterPacketExtension.ELEMENT_NAME,
                 "urn:xmpp:jingle:apps:rtp:ssma:0",
                 new NewAbstractExtensionElementProvider<>(NewParameterPacketExtension.class));
@@ -325,6 +325,10 @@ public class FakeUser implements StanzaListener
                 "urn:xmpp:jingle:transports:raw-udp:1",
                 new NewAbstractExtensionElementProvider<>(NewCandidatePacketExtension.class));
         ProviderManager.addExtensionProvider(
+                NewRawUdpTransportPacketExtension.ELEMENT_NAME,
+                NewRawUdpTransportPacketExtension.NAMESPACE,
+                new NewAbstractExtensionElementProvider<>(NewRawUdpTransportPacketExtension.class));
+        ProviderManager.addExtensionProvider(
                 NewSourceGroupPacketExtension.ELEMENT_NAME,
                 NewSourceGroupPacketExtension.NAMESPACE,
                 new NewAbstractExtensionElementProvider<>(NewSourceGroupPacketExtension.class));
@@ -332,6 +336,17 @@ public class FakeUser implements StanzaListener
                 NewSctpMapExtension.ELEMENT_NAME,
                 NewSctpMapExtension.NAMESPACE,
                 new NewAbstractExtensionElementProvider<>(NewSctpMapExtension.class));
+        ProviderManager.addExtensionProvider(
+                NewGroupExtensionElement.ELEMENT_NAME,
+                NewGroupExtensionElement.NAMESPACE,
+                new NewAbstractExtensionElementProvider<>(NewGroupExtensionElement.class));
+        ProviderManager.addExtensionProvider(
+                NewContentPacketExtension.ELEMENT_NAME,
+                NewGroupExtensionElement.NAMESPACE,
+                new NewAbstractExtensionElementProvider<>(NewContentPacketExtension.class));
+
+
+
         connection = new XMPPBOSHConnection(config);
 
         connection.registerIQRequestHandler(new AbstractIqRequestHandler(NewJingleIQ.ELEMENT_NAME, NewJingleIQ.NAMESPACE, IQ.Type.set, IQRequestHandler.Mode.sync)
@@ -527,7 +542,7 @@ public class FakeUser implements StanzaListener
             {
                 muc.join(Resourcepart.from(nickname));
 
-                muc.sendMessage("Goodbye cruel World!");
+                muc.sendMessage("Hello cruel World!");
 
                 /*
                  * Send a Presence packet containing a Nick extension so that the
@@ -685,6 +700,10 @@ public class FakeUser implements StanzaListener
                         cpe);
                 remoteDataContentExtension = cpe;
                 localDataContentExtension = localContent;
+
+                //localDataContentExtension = null;
+                //remoteDataContentExtension = null;
+                //localContent = null;
             }
             else
             {
@@ -714,8 +733,8 @@ public class FakeUser implements StanzaListener
                         ptRegistry,
                         rtpExtRegistry);
             }
-
-            contentMap.put(cpe.getName(), localContent);
+            if(localContent != null)
+                contentMap.put(cpe.getName(), localContent);
         }
         /*
          * We remove the content for the data (because data is not handle
@@ -820,6 +839,8 @@ public class FakeUser implements StanzaListener
         {
             logger.info("Sending presence packet with ssrc: " + presencePacketWithSSRC.toXML());
             connection.sendStanza(presencePacketWithSSRC);
+
+
             // Create the session-accept
             sessionAccept = new NewJingleIQ();
             sessionAccept.setTo(sessionInitiate.getFrom());
@@ -833,6 +854,8 @@ public class FakeUser implements StanzaListener
             {
                 sessionAccept.addContent(cpe);
             }
+            NewGroupExtensionElement groupEle = sessionInitiate.getGroup();
+            sessionAccept.setGroup(groupEle);
             sessionAccept.setInitiator(sessionInitiate.getFrom().toString());
 
             // Set the remote fingerprint on my streams and add the fingerprints
