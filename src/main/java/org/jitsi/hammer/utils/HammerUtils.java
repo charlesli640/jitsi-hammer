@@ -270,7 +270,8 @@ public class HammerUtils
                     }
                 }
             }
-
+            // If remote transport contains <rtcp-mux />, we should contain???
+            transport.setRtcpmux();
             content.addChildExtension(transport);
         }
     }

@@ -736,6 +736,7 @@ public class FakeUser implements StanzaListener
 
                 selectedFormats.put(cpe.getName(), HammerUtils.selectFormat(cpe.getName(), mediaFormats));
 
+                NewRtcpmuxPacketExtension rtcpmux = description.getRtcpmux();
                 localContent = HammerJingleUtils.createDescription(
                         NewContentPacketExtension.CreatorEnum.responder,
                         cpe.getName(),
@@ -743,13 +744,9 @@ public class FakeUser implements StanzaListener
                         mediaFormats,
                         rtpExtensionIntersection,
                         ptRegistry,
-                        rtpExtRegistry);
+                        rtpExtRegistry,
+                        rtcpmux);
 
-                NewRtcpmuxPacketExtension rtcpmux = description.getRtcpmux();
-                if(rtcpmux != null) {
-                    logger.info("CharlesXXX add rtcp-mux");
-                    localContent.addChildExtension(rtcpmux);
-                }
             }
 
             if(localContent != null)

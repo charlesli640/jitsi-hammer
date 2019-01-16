@@ -563,7 +563,8 @@ public class NewJingleUtils
             List<MediaFormat>            formats,
             List<RTPExtension>           rtpExtensions,
             DynamicPayloadTypeRegistry   dynamicPayloadTypes,
-            DynamicRTPExtensionsRegistry rtpExtensionsRegistry)
+            DynamicRTPExtensionsRegistry rtpExtensionsRegistry,
+            NewRtcpmuxPacketExtension    rtcpmux)
     {
         NewContentPacketExtension content = new NewContentPacketExtension();
         NewRtpDescriptionPacketExtension description
@@ -587,7 +588,9 @@ public class NewJingleUtils
                         formatToPayloadType(fmt, dynamicPayloadTypes));
             }
         }
-
+        if(rtcpmux != null) {
+            description.addChildExtension(rtcpmux);
+        }
         // extmap attributes
         if (rtpExtensions != null && rtpExtensions.size() > 0)
         {
@@ -610,6 +613,7 @@ public class NewJingleUtils
                 description.addChildExtension(ext);
             }
         }
+
         return content;
     }
 

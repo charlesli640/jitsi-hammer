@@ -119,11 +119,6 @@
                 <version>1.4.0</version>
                 <configuration>
                     <mainClass>org.jitsi.hammer.Main</mainClass>
-                       <additionalClasspathElements>
-                        <additionalClasspathElement>
-                            ~/.m2/repository/org/jitsi/jitsi-lgpl-dependencies/1.1-SNAPSHOT/jitsi-lgpl-dependencies-1.1-SNAPSHOT.jar
-                        </additionalClasspathElement>
-                    </additionalClasspathElements>
                 </configuration>
             </plugin>
         </plugins>
