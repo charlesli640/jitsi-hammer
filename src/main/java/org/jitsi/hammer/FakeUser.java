@@ -352,7 +352,10 @@ public class FakeUser implements StanzaListener
                 NewRtcpmuxPacketExtension.ELEMENT_NAME,
                 NewIceUdpTransportPacketExtension.NAMESPACE,
                 new NewAbstractExtensionElementProvider<>(NewRtcpmuxPacketExtension.class));
-
+        ProviderManager.addExtensionProvider(
+                NewBundlePacketExtension.ELEMENT_NAME,
+                NewBundlePacketExtension.NAMESPACE,
+                new NewAbstractExtensionElementProvider<>(NewBundlePacketExtension.class));
 
 
 
