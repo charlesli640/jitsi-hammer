@@ -255,7 +255,7 @@ public class Main
             final Hammer hammer = new Hammer(
                 hostInfo,
                 mdc,
-                "Jitsi-Hammer",
+                infoCLI.getNickname(),
                 numberOfFakeUsers,
                     conferenceInfo,
                     infoCLI.getDisableStats());

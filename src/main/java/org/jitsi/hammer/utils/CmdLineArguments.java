@@ -83,6 +83,9 @@ public class CmdLineArguments
     @Option(name="-room",usage="The MUC room name")
     private String roomName = "TestHammer";
 
+    @Option(name="-nick",usage="The base nickname of hammer user")
+    private String nickname = "Jitsi-Hammer";
+
     /**
      * The port used by the XMPP server.
      */
@@ -423,6 +426,11 @@ public class CmdLineArguments
     public boolean getDisableStats()
     {
         return disableStats;
+    }
+
+    public String getNickname()
+    {
+        return nickname;
     }
 
     /**
