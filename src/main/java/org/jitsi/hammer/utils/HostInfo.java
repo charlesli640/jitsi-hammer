@@ -96,7 +96,6 @@ public class HostInfo
         this.roomName = roomName;
         this.useHTTPS = useHTTPS;
         this.boshPath = boshPath;
-        this.useHTTPS = useHTTPS;
     }
 
 
@@ -260,4 +259,19 @@ public class HostInfo
         this.BOSHhost = BOSHhost;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+
+        // namespace
+        builder.append(" XMPPdomain: " + XMPPdomain);
+        builder.append(" port: " + port);
+        builder.append(" BOSHhost: " + BOSHhost);
+        builder.append(" MUCdomain: " + MUCdomain);
+        builder.append(" roomName: " + roomName);
+        builder.append(" useHTTPS: " + useHTTPS);
+        builder.append(" boshPath: " + boshPath);
+
+        return builder.toString();
+    }
 }

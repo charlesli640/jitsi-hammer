@@ -248,6 +248,7 @@ public class FakeUser implements StanzaListener
 
         try
         {
+            logger.info("Going to build connection config serverInfo: " + serverInfo);
             config = BOSHConfiguration.builder()
                     .setUseHttps(serverInfo.getUseHTTPS())
                     .setHost(serverInfo.getBOSHhostname())
@@ -358,8 +359,9 @@ public class FakeUser implements StanzaListener
                 new NewAbstractExtensionElementProvider<>(NewBundlePacketExtension.class));
 
 
-
+        logger.info("Connection constructor config: " + config);
         connection = new XMPPBOSHConnection(config);
+        logger.info("Connection constructor called");
 
         connection.registerIQRequestHandler(new AbstractIqRequestHandler(NewJingleIQ.ELEMENT_NAME, NewJingleIQ.NAMESPACE, IQ.Type.set, IQRequestHandler.Mode.sync)
         {
