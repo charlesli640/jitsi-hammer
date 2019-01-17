@@ -59,7 +59,6 @@ public class IceMediaStreamGenerator
     private static IceMediaStreamGenerator generator =
             new IceMediaStreamGenerator();
 
-
     /**
      * Initializes a new <tt>IceMediaStream</tt> instance with
      * default value for the minimum and maximum port value.
