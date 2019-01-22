@@ -378,6 +378,7 @@ public class HammerUtils
             if(format.getRTPPayloadType()
                 ==  MediaFormat.RTP_PAYLOAD_TYPE_UNKNOWN)
             {
+                logger.info("CharlesXXX configureMediaStream format="+format);
                 stream.addDynamicRTPPayloadType(
                     ptRegistry.getPayloadType(format),
                     format);
@@ -389,6 +390,7 @@ public class HammerUtils
              */
             for(RTPExtension rtpExtension : rtpExtensionMap.get(mediaName))
             {
+                logger.info("CharlesXXX configureMediaStream rtpExtension="+rtpExtension);
                 byte extensionID
                 = rtpExtRegistry.getExtensionMapping(rtpExtension);
                 stream.addRTPExtension(extensionID , rtpExtension);
@@ -457,7 +459,7 @@ public class HammerUtils
                 }
                 catch (SocketException e)
                 {
-
+                    logger.info("CharlesXXX DefaultStreamConnector exception:" +e.getStackTrace());
                 }
 
             }

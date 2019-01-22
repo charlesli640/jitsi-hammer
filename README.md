@@ -118,3 +118,6 @@ For now it is set to only display at a WARNING level, but you can set "org.jitsi
 
 ## command of execution
 ./jitsi-hammer.sh -u "https://jitsimeet.magnet.com/http-bind/" -room 222 -users 1 -videortpdump ./resources/rtp_vp8.rtpdump -audiortpdump ./resources/narwhals-audio.rtpdump
+
+## Kill process
+ps -ef | grep hammer | awk '{print $2}' |xargs kill -9
