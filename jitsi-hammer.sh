@@ -54,7 +54,7 @@ if $REBUILD ; then
 fi
 
 exec mvn exec:java -Dexec.args="$*" \
-  -Djavax.net.debug=ssl -Djavax.net.ssl.trustStoreType=jks \
+  -Djavax.net.ssl.trustStoreType=jks \
   -Dsun.security.ssl.allowUnsafeRenegotiation=true \
   -Djavax.net.ssl.keyStore=$KEYSTORE_FILE -Djavax.net.ssl.keyStorePassword=$KEYSTORE_PWD \
   -Djavax.net.ssl.trustStore=$KEYSTORE_FILE -Djavax.net.ssl.trustStorePassword=$KEYSTORE_PWD \

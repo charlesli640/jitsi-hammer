@@ -229,7 +229,7 @@ public class NewRtpDescriptionPacketExtension
             this.setBandwidth((NewBandwidthPacketExtension)childExtension);
 
         else if (childExtension instanceof NewRtcpmuxPacketExtension) {
-            logger.info("CharlesXXX addChildExtension: NewRtcpmuxPacketExtension");
+            //logger.info("CharlesXXX addChildExtension: NewRtcpmuxPacketExtension");
             this.setRtcpmux((NewRtcpmuxPacketExtension) childExtension);
         }
         else if (childExtension instanceof NewRTPHdrExtPacketExtension)

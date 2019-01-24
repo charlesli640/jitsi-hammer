@@ -76,7 +76,7 @@ public class JingleProvider extends IntrospectionProvider.IQIntrospectionProvide
                         }
                         else if (child instanceof  NewGroupExtensionElement)
                         {
-                            logger.info("CharlesXXX parse group");
+                            //logger.info("CharlesXXX parse group");
                             jingleIQ.setGroup((NewGroupExtensionElement) child);
                         }
                         else

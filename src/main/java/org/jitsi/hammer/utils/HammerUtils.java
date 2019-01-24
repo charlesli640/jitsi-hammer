@@ -373,12 +373,12 @@ public class HammerUtils
              * return null for the Player, the bug is also avoided : maybe
              * libjitsi doesn't handle correctly a null player..
              */
-            stream.setDirection(MediaDirection.SENDONLY);
+            stream.setDirection(MediaDirection.SENDRECV);
 
             if(format.getRTPPayloadType()
                 ==  MediaFormat.RTP_PAYLOAD_TYPE_UNKNOWN)
             {
-                logger.info("CharlesXXX configureMediaStream format="+format);
+                //logger.info("CharlesXXX configureMediaStream format="+format);
                 stream.addDynamicRTPPayloadType(
                     ptRegistry.getPayloadType(format),
                     format);
@@ -390,7 +390,7 @@ public class HammerUtils
              */
             for(RTPExtension rtpExtension : rtpExtensionMap.get(mediaName))
             {
-                logger.info("CharlesXXX configureMediaStream rtpExtension="+rtpExtension);
+                //logger.info("CharlesXXX configureMediaStream rtpExtension="+rtpExtension);
                 byte extensionID
                 = rtpExtRegistry.getExtensionMapping(rtpExtension);
                 stream.addRTPExtension(extensionID , rtpExtension);
@@ -576,19 +576,19 @@ public class HammerUtils
     {
         NewIceUdpTransportPacketExtension transportRemote =
                 remoteContent.getFirstChildOfType(NewIceUdpTransportPacketExtension.class);
-        logger.info("CharlesXXX transportRemote toXML=" + transportRemote.toXML());
+        //logger.info("CharlesXXX transportRemote toXML=" + transportRemote.toXML());
         NewIceUdpTransportPacketExtension transportLocal =
                 localContent.getFirstChildOfType(NewIceUdpTransportPacketExtension.class);
 
         transportLocal.removeAllCandidate();
 
-        logger.info("CharlesXXX after clear child transportLocal toXML=" + transportLocal.toXML());
+        //logger.info("CharlesXXX after clear child transportLocal toXML=" + transportLocal.toXML());
 
         if (transportRemote != null) {
-            logger.info("CharlesXXX transportRemote != null");
+            //logger.info("CharlesXXX transportRemote != null");
             NewSctpMapExtension sctpmap = transportRemote.getFirstChildOfType(NewSctpMapExtension.class);
             if (sctpmap != null) {
-                logger.info("CharlesXXX sctpmap != null");
+                //logger.info("CharlesXXX sctpmap != null");
                 transportLocal.addChildExtension(sctpmap);
             } else {
                 logger.info("CharlesXXX no sctpmap");

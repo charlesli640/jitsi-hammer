@@ -104,7 +104,7 @@ public class Hammer
      * The <tt>Object</tt> that will be used 
      * as synchronization root when initiating the conference
      */
-    private final Object focusInvitationSyncRoot = new Object();
+    //private final Object focusInvitationSyncRoot = new Object();
 
     /**
      * The boolean flag identifying whether focus has been invited
@@ -519,10 +519,11 @@ public class Hammer
      * 
      * @return the focus invitation sync object
      */
+    /*
     public Object getFocusInvitationSyncRoot() 
     {
         return this.focusInvitationSyncRoot;
-    }
+    }*/
 
     /**
      * Get the boolean flag identifying whether this Focus has been invited 
@@ -530,19 +531,21 @@ public class Hammer
      * 
      * @return the focus invitation boolean flag
      */
+    /*
     public boolean getFocusInvited() 
     {
         return this.focusInvited;
-    }
+    }*/
 
     /**
      * Set the boolean flag identifying whether this Focus has been invited 
      * to the conference this <tt>Hammer</tt> targeting or not
      */
+    /*
     public void setFocusInvited(boolean focusInvited) 
     {
         this.focusInvited = focusInvited;
-    }
+    }*/
 
     /**
      * Get the XMPP server information object associated 

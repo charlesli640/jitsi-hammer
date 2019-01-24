@@ -169,7 +169,7 @@ public class FakeUser implements StanzaListener
      *
      * @return JID for the focus component
      */
-    public String getFocusJID()
+    public Jid getFocusComponentJID()
     {
         String focusJID;
         if (this.serverInfo.getFocusJID() != null) {
@@ -177,7 +177,13 @@ public class FakeUser implements StanzaListener
         } else {
             focusJID = "focus." + this.serverInfo.getXMPPDomain();
         }
-        return focusJID;
+        try {
+            Jid fjid = JidCreate.from(focusJID);
+            return fjid;
+        } catch (XmppStringprepException e) {
+            logger.error("Focus JID not valid");
+        }
+        return null;
     }
 
     /**
@@ -370,7 +376,7 @@ public class FakeUser implements StanzaListener
             {
                 logger.info("CharlesXXX: coming into handleIQRequest: " + iq.toXML());
                 NewJingleIQ jiq = (NewJingleIQ)iq;
-                logger.info("iq request handler got jingle iq: " + jiq.toXML());
+                //logger.info("iq request handler got jingle iq: " + jiq.toXML());
                 IQ result = IQ.createResultIQ(iq);
                 switch (jiq.getAction())
                 {
@@ -443,6 +449,18 @@ public class FakeUser implements StanzaListener
             logger.fatal("Interrupted while making xmpp connection: " + e.toString());
             System.exit(1);
         }
+
+        createConference();
+
+        try
+        {
+            Thread.sleep(10);
+        }
+        catch(InterruptedException ex)
+        {
+            Thread.currentThread().interrupt();
+        }
+
         connectMUC();
     }
 
@@ -479,12 +497,13 @@ public class FakeUser implements StanzaListener
      * @throws  XMPPException on XMPP protocol errors
      * @throws  IOException on I/O errors
      */
-    private void inviteFocus()
+    private void createConference()
             throws SmackException, XMPPException, IOException
     {
+        logger.info("CharlesXXX createConference enter");
         ConferenceInitiationIQ conferenceInitiationIQ
                 = new ConferenceInitiationIQ();
-        conferenceInitiationIQ.setTo(this.getFocusJID());
+        conferenceInitiationIQ.setTo(this.getFocusComponentJID());
         conferenceInitiationIQ.setType(IQ.Type.set);
         conferenceInitiationIQ.setServerInfo(serverInfo);
         conferenceInitiationIQ.addConferenceProperty(
@@ -516,7 +535,7 @@ public class FakeUser implements StanzaListener
         try
         {
             this.connection.sendStanza(conferenceInitiationIQ);
-            this.hammer.setFocusInvited(true);
+            //this.hammer.setFocusInvited(true);
             logger.info("Conference initiation IQ is sent to the focus user");
         }
         catch (SmackException.NotConnectedException e) {
@@ -571,14 +590,15 @@ public class FakeUser implements StanzaListener
                  * Make an attempt to send an IQ to Focus user
                  * in order to enable Jingle for the conference
                  */
+                 /*
                 synchronized (this.hammer.getFocusInvitationSyncRoot())
                 {
 
                     if (!this.hammer.getFocusInvited()) {
-                        //inviteFocus();
+                        //createConference();
                     }
 
-                }
+                }*/
             }
             catch (XMPPException.XMPPErrorException e)
             {
@@ -707,7 +727,7 @@ public class FakeUser implements StanzaListener
             NewContentPacketExtension localContent;
             //TODO(brian): do we still need this special treatment for data?
             if (cpe.getName().equalsIgnoreCase("data")) {
-                logger.info("CharlesXXX Going to Add data channel");
+                //logger.info("CharlesXXX Going to Add data channel");
                 localContent = HammerUtils.createDescriptionForDataContent(
                         NewContentPacketExtension.CreatorEnum.responder,
                         NewContentPacketExtension.SendersEnum.both,
@@ -885,7 +905,7 @@ public class FakeUser implements StanzaListener
 
             // for data
             if(localDataContentExtension != null && remoteDataContentExtension != null) {
-                logger.info("CharlesXXX setDataSctpmap");
+                //logger.info("CharlesXXX setDataSctpmap");
                 HammerUtils.setDataSctpmap(localDataContentExtension, remoteDataContentExtension);
             }
 
@@ -1037,9 +1057,9 @@ public class FakeUser implements StanzaListener
      */
     public void processStanza(Stanza packet)
     {
-        logger.info("CharlesXXX Got Stanza packet: " + packet.toXML());
+        logger.info("CharlesXXX processStanza Stanza packet: " + packet.toXML());
         NewJingleIQ jiq = (NewJingleIQ)packet;
-        logger.info("CharlesXXX Got jingle iq: " + jiq.toXML());
+        //logger.info("CharlesXXX Got jingle iq: " + jiq.toXML());
         ackJingleIQ(jiq);
         switch(jiq.getAction())
         {
