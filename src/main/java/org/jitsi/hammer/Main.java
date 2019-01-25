@@ -246,6 +246,7 @@ public class Main
             
             MediaDeviceChooser mdc = infoCLI.getMediaDeviceChooser();
 
+            int numberOfRooms = infoCLI.getNumberOfRooms();
             int numberOfFakeUsers = infoCLI.getNumberOfFakeUsers();
             List<Credential> credentials = infoCLI.getCredentialsList();
             if(credentials.size() > 0) numberOfFakeUsers = credentials.size();
@@ -255,7 +256,9 @@ public class Main
             final Hammer hammer = new Hammer(
                 hostInfo,
                 mdc,
+                infoCLI.getRoomNamePrefix(),
                 infoCLI.getNickname(),
+                    numberOfRooms,
                 numberOfFakeUsers,
                     conferenceInfo,
                     infoCLI.getDisableStats());

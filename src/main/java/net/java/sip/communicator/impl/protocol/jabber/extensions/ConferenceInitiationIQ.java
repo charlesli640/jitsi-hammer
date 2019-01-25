@@ -59,6 +59,8 @@ public class ConferenceInitiationIQ extends IQ
      */
     private HostInfo serverInfo;
 
+    private String roomName;
+
     /**
      * The random <tt>UUID</tt> to use in conference initiation as a machine UID
      */
@@ -94,7 +96,7 @@ public class ConferenceInitiationIQ extends IQ
     {
         if (serverInfo != null)
         {
-            xml.attribute(ROOM_ATTR_NAME, serverInfo.getRoomURL());
+            xml.attribute(ROOM_ATTR_NAME, this.roomName + "@" +serverInfo.getMUCDomain());
         }
         xml.attribute(MACHINE_UID_ATTR_NAME, machineUID.toString());
 
@@ -116,6 +118,10 @@ public class ConferenceInitiationIQ extends IQ
      */
     public void setServerInfo(HostInfo serverInfo) {
         this.serverInfo = serverInfo;
+    }
+
+    public void setRoomName(String roomName) {
+        this.roomName = roomName;
     }
     
 }

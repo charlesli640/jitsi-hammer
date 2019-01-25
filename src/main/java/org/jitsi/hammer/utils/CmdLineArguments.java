@@ -78,10 +78,16 @@ public class CmdLineArguments
     private String focusJID;
 
     /**
-     * The name of the MUC room that we'll use.
+     * The name prefix of the MUC room that we'll use.
      */
-    @Option(name="-room",usage="The MUC room name")
-    private String roomName = "TestHammer";
+    @Option(name="-room",usage="The MUC room name prefix")
+    private String roomNamePrefix = "TestHammer";
+
+    /**
+     * The number of the MUC room that we'll use.
+     */
+    @Option(name="-rooms",usage="The number of rooms this hammer is going to create/join")
+    private int numberOfRooms = 1;
 
     @Option(name="-nick",usage="The base nickname of hammer user")
     private String nickname = "Jitsi-Hammer";
@@ -256,7 +262,7 @@ public class CmdLineArguments
     {
         BOSHUrl boshUrl = new BOSHUrl(this.BOSHuri);
         
-        HostInfo hostInfo = boshUrl.getHostInfo(roomName);
+        HostInfo hostInfo = boshUrl.getHostInfo();
         
         // Honor the overrides
         
@@ -294,6 +300,13 @@ public class CmdLineArguments
         
     }
 
+    public String getRoomNamePrefix() {
+        return roomNamePrefix;
+    }
+
+    public int getNumberOfRooms() {
+        return numberOfRooms;
+    }
     /**
      * Get the number of fake users jitsi-hammer will create.
      * @return the number of fake users jitsi-hammer will create.

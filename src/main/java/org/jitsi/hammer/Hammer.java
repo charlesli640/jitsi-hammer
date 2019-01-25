@@ -67,6 +67,7 @@ public class Hammer
      * The base of the nickname use by all the virtual users this Hammer
      * will create.
      */
+    private final String roomname;
     private final String nickname;
 
     /**
@@ -159,8 +160,9 @@ public class Hammer
      * @param host The information about the XMPP server to which all
      * virtual users will try to connect.
      * @param mdc The media device chooser instance
+     * @prama roomname The room name prefix
      * @param nickname The base of the nickname used by all the virtual users.
-     * @param numberOfUser The number of virtual users this <tt>Hammer</tt>
+     * @param numberOfUsers The number of virtual users this <tt>Hammer</tt>
      * @param conferenceInfo The information 
      *                       regarding the conference properties 
      *                       \for the video conference to be initiated
@@ -169,31 +171,37 @@ public class Hammer
      */
     public Hammer(
             HostInfo host, 
-            MediaDeviceChooser mdc, 
-            String nickname, 
-            int numberOfUser, 
+            MediaDeviceChooser mdc,
+            String roomNamePrefix,
+            String nickname,
+            int numberOfRooms,
+            int numberOfUsers,
             ConferenceInfo conferenceInfo,
             boolean disableStats)
     {
         this.disableStats = disableStats;
+        this.roomname = roomNamePrefix;
         this.nickname = nickname;
         this.serverInfo = host;
         this.conferenceInfo = conferenceInfo;
         this.mediaDeviceChooser = mdc;
-        fakeUsers = new FakeUser[numberOfUser];
+        fakeUsers = new FakeUser[numberOfRooms*numberOfUsers];
         if (!disableStats)
             hammerStats = new HammerStats();
-
-        for(int i = 0; i<fakeUsers.length; i++)
-        {
-            fakeUsers[i] = new FakeUser(
-                this,
-                this.mediaDeviceChooser,
-                this.nickname+"_"+i,
-                (hammerStats != null));
+        int k = 0;
+        for (int j=0; j<numberOfRooms; j++) {
+            for (int i = 0; i < numberOfUsers; i++) {
+                fakeUsers[k] = new FakeUser(
+                        this,
+                        this.mediaDeviceChooser,
+                        this.roomname + j,
+                        this.nickname + "_" + i,
+                        (hammerStats != null));
+                k++;
+            }
         }
         logger.info(String.format("Hammer created : %d fake users were created"
-            + " with a base nickname %s", numberOfUser, nickname));
+            + " with a base nickname %s", numberOfUsers, nickname));
     }
 
 

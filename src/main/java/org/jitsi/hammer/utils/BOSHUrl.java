@@ -52,12 +52,11 @@ public class BOSHUrl {
 
     /**
      * Construct the <tt>HostInfo</tt> from a given BOSH URI
-     * 
-     * @param roomName The room name to include in <tt>HostInfo</tt>
+     *
      * @return <tt>HostInfo</tt> describing the server and room where to target
      *        the load
      */
-    public HostInfo getHostInfo(String roomName) {
+    public HostInfo getHostInfo() {
         String XMPPdomain = uri.getHost();
         String BOSHhost = uri.getHost();
         String MUCdomain = "conference." + uri.getHost();
@@ -78,7 +77,7 @@ public class BOSHUrl {
                 BOSHhost, 
                 port, 
                 MUCdomain, 
-                roomName, 
+                //roomName,
                 boshURI, 
                 useHTTPS
         );

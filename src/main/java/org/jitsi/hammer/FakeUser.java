@@ -90,6 +90,8 @@ public class FakeUser implements StanzaListener
      */
     private HostInfo serverInfo;
 
+    private String roomName;
+
     /**
      * The conference properties for the Focus invitation
      */
@@ -200,7 +202,8 @@ public class FakeUser implements StanzaListener
         Hammer hammer,
         MediaDeviceChooser mdc)
     {
-        this(hammer, mdc, null, true);
+        // by default, using room named as "hammer"
+        this(hammer, mdc, "hammer", null, true);
     }
 
     /**
@@ -219,10 +222,11 @@ public class FakeUser implements StanzaListener
     public FakeUser(
         Hammer hammer,
         MediaDeviceChooser mdc,
+        String roomName,
         String nickname,
         boolean statisticsEnabled)
     {
-        this(hammer, mdc, nickname, false, statisticsEnabled);
+        this(hammer, mdc, roomName, nickname, false, statisticsEnabled);
     }
 
     /**
@@ -241,12 +245,14 @@ public class FakeUser implements StanzaListener
     public FakeUser(
         Hammer hammer,
         MediaDeviceChooser mdc,
+        String roomName,
         String nickname,
         boolean smackDebug,
         boolean statisticsEnabled)
     {
         this.hammer = hammer;
         this.serverInfo = hammer.getServerInfo();
+        this.roomName = roomName;
         this.mediaDeviceChooser = mdc;
         this.nickname = (nickname == null) ? "Anonymous" : nickname;
         this.conferenceInfo = hammer.getConferenceInfo();
@@ -368,6 +374,14 @@ public class FakeUser implements StanzaListener
         logger.info("Connection constructor config: " + config);
         connection = new XMPPBOSHConnection(config);
         logger.info("Connection constructor called");
+
+        /*
+        connection.registerIQRequestHandler(new AbstractIqRequestHandler() {
+            @Override
+            public IQ handleIQRequest(IQ iq) {
+                return null;
+            }
+        });*/
 
         connection.registerIQRequestHandler(new AbstractIqRequestHandler(NewJingleIQ.ELEMENT_NAME, NewJingleIQ.NAMESPACE, IQ.Type.set, IQRequestHandler.Mode.sync)
         {
@@ -506,6 +520,7 @@ public class FakeUser implements StanzaListener
         conferenceInitiationIQ.setTo(this.getFocusComponentJID());
         conferenceInitiationIQ.setType(IQ.Type.set);
         conferenceInitiationIQ.setServerInfo(serverInfo);
+        conferenceInitiationIQ.setRoomName(this.roomName);
         conferenceInitiationIQ.addConferenceProperty(
                 new ConferencePropertyPacketExtension(
                         "channelLastN", this.conferenceInfo.getChannelLastN()));
@@ -566,7 +581,7 @@ public class FakeUser implements StanzaListener
     private void connectMUC() throws SmackException, XMPPException, IOException
     {
         mucManager = MultiUserChatManager.getInstanceFor(connection);
-        String roomURL = serverInfo.getRoomURL();
+        String roomURL = this.roomName + "@" + serverInfo.getMUCDomain();
         logger.info(this.nickname + " : Trying to connect to MUC " + roomURL);
         muc = mucManager.getMultiUserChat(JidCreate.entityBareFrom(roomURL));
         while(true)
@@ -842,7 +857,7 @@ public class FakeUser implements StanzaListener
         Jid recipient = null;
         try
         {
-            recipient = JidCreate.entityFullFrom(serverInfo.getRoomName()
+            recipient = JidCreate.entityFullFrom(this.roomName
                     +"@"
                     +serverInfo.getMUCDomain()
                     + "/"

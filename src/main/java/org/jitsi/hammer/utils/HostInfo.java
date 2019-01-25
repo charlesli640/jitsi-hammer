@@ -42,7 +42,7 @@ public class HostInfo
     /**
      * The name of the MUC room that we'll use.
      */
-    private String roomName;
+    //private String roomName;
 
     /**
      * The port used by the BOSH server.
@@ -84,7 +84,7 @@ public class HostInfo
             String BOSHhost,
             int port,
             String MUCdomain,
-            String roomName,
+            //String roomName,
             String boshPath,
             boolean useHTTPS
     )
@@ -93,7 +93,7 @@ public class HostInfo
         this.port = port;
         this.BOSHhost = BOSHhost;
         this.MUCdomain = MUCdomain;
-        this.roomName = roomName;
+        //this.roomName = roomName;
         this.useHTTPS = useHTTPS;
         this.boshPath = boshPath;
     }
@@ -135,10 +135,11 @@ public class HostInfo
      * (in lower case).
      * @return the room name of a MUC (in lower case).
      */
+    /*
     public String getRoomName()
     {
         return this.roomName.toLowerCase();
-    }
+    }*/
 
     /**
      * Get the port number of the XMPP server of this <tt>HostInfo</tt>.
@@ -183,10 +184,10 @@ public class HostInfo
      *
      * @return URL for the corresponding conference
      */
-    public String getRoomURL()
+    /*public String getRoomURL()
     {
         return this.roomName + "@" + this.MUCdomain;
-    }
+    }*/
 
     /**
      * Set the focus JID value to be used to perform conference initiation
@@ -268,7 +269,7 @@ public class HostInfo
         builder.append(" port: " + port);
         builder.append(" BOSHhost: " + BOSHhost);
         builder.append(" MUCdomain: " + MUCdomain);
-        builder.append(" roomName: " + roomName);
+        //builder.append(" roomName: " + roomName);
         builder.append(" useHTTPS: " + useHTTPS);
         builder.append(" boshPath: " + boshPath);
 
