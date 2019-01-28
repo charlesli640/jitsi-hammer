@@ -117,7 +117,8 @@ You can adjust the logging configuration of the JVM with the file ./lib/logging.
 For now it is set to only display at a WARNING level, but you can set "org.jitsi.hammer.level" to INFO if you want to print the INFO log of Jitsi-Hammer (but not libjitsi).
 
 ## command of execution
-./jitsi-hammer.sh -u "https://jitsimeet.magnet.com/http-bind/" -room YourRoom -rooms 5 -users 2 -videortpdump ./resources/rtp_vp8.rtpdump -audiortpdump ./resources/narwhals-audio.rtpdump -nick YourNick
+./jitsi-hammer.sh -u "https://jitsi-meet-charles.magnet.com/http-bind/" -room YourRoom -rooms 5 -users 2 -videortpdump ./resources/rtp_vp8.rtpdump -audiortpdump ./resources/narwhals-audio.rtpdump -nick YourNick
+./jitsi-hammer.sh -u "https://jitsi-meet-charles.magnet.com/http-bind/" -room abc -users 2 -videortpdump ./resources/rtp_vp8.rtpdump -audiortpdump ./resources/narwhals-audio.rtpdump -nick YourNick
 
 ## Kill process
 ps -ef | grep jitsi-hammer | awk '{print $2}' |xargs kill -9

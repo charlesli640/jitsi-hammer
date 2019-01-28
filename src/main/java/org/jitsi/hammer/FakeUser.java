@@ -468,7 +468,7 @@ public class FakeUser implements StanzaListener
 
         try
         {
-            Thread.sleep(10);
+            Thread.sleep(2000);
         }
         catch(InterruptedException ex)
         {
@@ -551,7 +551,7 @@ public class FakeUser implements StanzaListener
         {
             this.connection.sendStanza(conferenceInitiationIQ);
             //this.hammer.setFocusInvited(true);
-            logger.info("Conference initiation IQ is sent to the focus user");
+            logger.info("Conference initiation IQ is sent to the focus user " + conferenceInitiationIQ.toXML());
         }
         catch (SmackException.NotConnectedException e) {
             /*
@@ -568,7 +568,10 @@ public class FakeUser implements StanzaListener
         {
             logger.warn("Interrupted while sending conference initiation iq: " + e.toString());
         }
+    }
 
+    private void startRecording() throws SmackException, XMPPException, IOException
+    {
 
     }
 

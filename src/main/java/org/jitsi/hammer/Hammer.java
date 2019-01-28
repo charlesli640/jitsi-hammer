@@ -190,11 +190,14 @@ public class Hammer
             hammerStats = new HammerStats();
         int k = 0;
         for (int j=0; j<numberOfRooms; j++) {
+            String rname = this.roomname;
+            if (numberOfRooms > 1)
+                rname = this.roomname + j;
             for (int i = 0; i < numberOfUsers; i++) {
                 fakeUsers[k] = new FakeUser(
                         this,
                         this.mediaDeviceChooser,
-                        this.roomname + j,
+                        rname,
                         this.nickname + "_" + i,
                         (hammerStats != null));
                 k++;

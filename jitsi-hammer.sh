@@ -45,7 +45,8 @@ SC_HOME_DIR_LOCATION=$SCRIPT_DIR
 SC_HOME_DIR_NAME=.jitsi-hammer
 LOG_HOME=$SCRIPT_DIR/$SC_HOME_DIR_NAME/log
 LOG_FILE=`date '+%Y-%m-%d_%H%M%S'`
-touch tee $LOG_HOME/$LOG_FILE.log
+mkdir -p $LOG_HOME
+touch $LOG_HOME/$LOG_FILE.log
 rm -fr $LOG_HOME/log.latest
 ln -s $LOG_FILE.log $LOG_HOME/log.latest
 
