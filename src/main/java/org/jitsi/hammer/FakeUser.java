@@ -109,6 +109,10 @@ public class FakeUser implements StanzaListener
      */
     private String nickname;
 
+    private String sessionID;
+
+    private Jid mucfocus;
+
 
     /**
      * The <tt>ConnectionConfiguration</tt> equivalent of <tt>serverInfo</tt>.
@@ -181,6 +185,18 @@ public class FakeUser implements StanzaListener
         }
         try {
             Jid fjid = JidCreate.from(focusJID);
+            return fjid;
+        } catch (XmppStringprepException e) {
+            logger.error("Focus JID not valid");
+        }
+        return null;
+    }
+
+    public Jid getFocusUserJID()
+    {
+        String fjids = "focus@" + this.serverInfo.getXMPPDomain();
+        try {
+            Jid fjid = JidCreate.from(fjids);
             return fjid;
         } catch (XmppStringprepException e) {
             logger.error("Focus JID not valid");
@@ -572,6 +588,34 @@ public class FakeUser implements StanzaListener
 
     private void startRecording() throws SmackException, XMPPException, IOException
     {
+        logger.info("CharlesXXX startRecording enter");
+        StartRecordingIQ iq = new StartRecordingIQ();
+        iq.setTo(this.mucfocus);
+        iq.setType(IQ.Type.set);
+        iq.setSessionID(this.sessionID);
+        //iq.setServerInfo(serverInfo);
+        //iq.setRoomName(this.roomName);
+        try
+        {
+            this.connection.sendStanza(iq);
+            //this.hammer.setFocusInvited(true);
+            logger.info("Start Recording IQ is sent to the focus user " + iq.toXML());
+        }
+        catch (SmackException.NotConnectedException e) {
+            /*
+             * Give up here, make an attempt to reconnect,
+             * and let the next <tt>FakeUser</tt> thread awake with
+             * focus user invitation
+             */
+            logger.warn("Cannot send the start recording IQ: not" +
+                    " connected, will retry with another FakeUser");
+            e.printStackTrace();
+            //this.connection.connect();
+        }
+        catch (InterruptedException e)
+        {
+            logger.warn("Interrupted while sending start recording iq: " + e.toString());
+        }
 
     }
 
@@ -705,14 +749,13 @@ public class FakeUser implements StanzaListener
      * The initiator is taken from the From attribute
      * of the initiate-session message.
      */
-    private void acceptJingleSession()
-    {
+    private void acceptJingleSession() {
         Map<String, NewContentPacketExtension> contentMap = new HashMap<>();
         /*
          * A Map mapping of media type (audio, video, data), to a <tt>MediaFormat</tt>
          * representing the selected format for the stream handling this media type.
          */
-        Map<String,MediaFormat> selectedFormats =
+        Map<String, MediaFormat> selectedFormats =
                 new HashMap<String, MediaFormat>();
 
         /*
@@ -720,8 +763,8 @@ public class FakeUser implements StanzaListener
          * RTPExtension representing the selected RTP extensions for the format
          * (and its corresponding <tt>MediaDevice</tt>)
          */
-        Map<String,List<RTPExtension>> selectedRtpExtensions =
-                new HashMap<String,List<RTPExtension>>();
+        Map<String, List<RTPExtension>> selectedRtpExtensions =
+                new HashMap<String, List<RTPExtension>>();
 
         /*
          * The registry containing the dynamic payload types learned in the
@@ -740,8 +783,7 @@ public class FakeUser implements StanzaListener
         NewContentPacketExtension remoteDataContentExtension = null;
         NewContentPacketExtension localDataContentExtension = null;
 
-        for (NewContentPacketExtension cpe : sessionInitiate.getContentList())
-        {
+        for (NewContentPacketExtension cpe : sessionInitiate.getContentList()) {
             NewContentPacketExtension localContent;
             //TODO(brian): do we still need this special treatment for data?
             if (cpe.getName().equalsIgnoreCase("data")) {
@@ -756,13 +798,10 @@ public class FakeUser implements StanzaListener
                 //localDataContentExtension = null;
                 //remoteDataContentExtension = null;
                 //localContent = null;
-            }
-            else
-            {
+            } else {
                 NewRtpDescriptionPacketExtension description =
                         cpe.getFirstChildOfType(NewRtpDescriptionPacketExtension.class);
-                if (description == null)
-                {
+                if (description == null) {
                     continue;
                 }
                 List<MediaFormat> mediaFormats = HammerJingleUtils.extractFormats(description, ptRegistry);
@@ -789,7 +828,7 @@ public class FakeUser implements StanzaListener
 
             }
 
-            if(localContent != null)
+            if (localContent != null)
                 contentMap.put(cpe.getName(), localContent);
         }
         /*
@@ -803,18 +842,15 @@ public class FakeUser implements StanzaListener
 
         IceMediaStreamGenerator iceMediaStreamGenerator = IceMediaStreamGenerator.getInstance();
 
-        try
-        {
+        try {
             iceMediaStreamGenerator.generateIceMediaStream(
-                agent,
-                contentMap.keySet(),
-                null,
-                null);
-        }
-        catch (IOException e)
-        {
+                    agent,
+                    contentMap.keySet(),
+                    null,
+                    null);
+        } catch (IOException e) {
             logger.fatal(this.nickname + " : Error during the generation"
-                + " of the IceMediaStream",e);
+                    + " of the IceMediaStream", e);
         }
 
         /*
@@ -822,23 +858,23 @@ public class FakeUser implements StanzaListener
          *  the stream to the content list of the future session-accept
          */
         HammerUtils.addRemoteCandidateToAgent(
-            agent,
-            sessionInitiate.getContentList());
+                agent,
+                sessionInitiate.getContentList());
         HammerUtils.addLocalCandidateToContentList(
-            agent,
-            contentMap.values());
+                agent,
+                contentMap.values());
 
         /*
          * Configure the MediaStreams with the selected MediaFormats and with
          *  the selected MediaDevice (via the MediaDeviceChooser)
          */
         HammerUtils.configureMediaStream(
-            mediaStreamMap,
-            selectedFormats,
-            selectedRtpExtensions,
-            mediaDeviceChooser,
-            ptRegistry,
-            rtpExtRegistry);
+                mediaStreamMap,
+                selectedFormats,
+                selectedRtpExtensions,
+                mediaDeviceChooser,
+                ptRegistry,
+                rtpExtRegistry);
 
         /*
          * Now that the MediaStreams are configured, add their SSRCs to the
@@ -858,25 +894,21 @@ public class FakeUser implements StanzaListener
          */
         Stanza presencePacketWithSSRC = new Presence(Presence.Type.available);
         Jid recipient = null;
-        try
-        {
+        try {
             recipient = JidCreate.entityFullFrom(this.roomName
-                    +"@"
-                    +serverInfo.getMUCDomain()
+                    + "@"
+                    + serverInfo.getMUCDomain()
                     + "/"
                     + nickname);
 
-        }
-        catch (XmppStringprepException e)
-        {
+        } catch (XmppStringprepException e) {
             logger.error("Error creating to field for presence packet: " + e.toString());
         }
 
         presencePacketWithSSRC.setTo(recipient);
         presencePacketWithSSRC.addExtension(new Nick(this.nickname));
         MediaPacketExtension mediaPacket = new MediaPacketExtension();
-        for(String key : contentMap.keySet())
-        {
+        for (String key : contentMap.keySet()) {
             //logger.info("CharlesXXX contentMap key: " + key);
             if (key.equalsIgnoreCase("data")) {
                 logger.info("CharlesXXX: skip data type media");
@@ -885,29 +917,29 @@ public class FakeUser implements StanzaListener
 
             String str = String.valueOf(mediaStreamMap.get(key).getLocalSourceID());
             mediaPacket.addSource(
-                key,
-                str,
-                MediaDirection.SENDRECV.toString());
+                    key,
+                    str,
+                    MediaDirection.SENDRECV.toString());
         }
         presencePacketWithSSRC.addExtension(mediaPacket);
 
-        try
-        {
+        try {
             logger.info("Sending presence packet with ssrc: " + presencePacketWithSSRC.toXML());
             connection.sendStanza(presencePacketWithSSRC);
 
 
             // Create the session-accept
             sessionAccept = new NewJingleIQ();
+            mucfocus = sessionInitiate.getFrom();
             sessionAccept.setTo(sessionInitiate.getFrom());
             sessionAccept.setFrom(sessionInitiate.getTo());
             sessionAccept.setResponder(sessionInitiate.getTo().toString());
             sessionAccept.setType(IQ.Type.set);
             sessionAccept.setSID(sessionInitiate.getSID());
+            sessionID = sessionInitiate.getSID(); // for later use
             sessionAccept.setAction(NewJingleAction.SESSION_ACCEPT);
 
-            for (NewContentPacketExtension cpe : contentMap.values())
-            {
+            for (NewContentPacketExtension cpe : contentMap.values()) {
                 sessionAccept.addContent(cpe);
             }
             NewGroupExtensionElement groupEle = sessionInitiate.getGroup();
@@ -917,12 +949,12 @@ public class FakeUser implements StanzaListener
             // Set the remote fingerprint on my streams and add the fingerprints
             //  of my streams to the content list of the session-accept
             HammerUtils.setDtlsEncryptionOnTransport(
-                dtlsControl,
-                sessionAccept.getContentList(),
-                sessionInitiate.getContentList());
+                    dtlsControl,
+                    sessionAccept.getContentList(),
+                    sessionInitiate.getContentList());
 
             // for data
-            if(localDataContentExtension != null && remoteDataContentExtension != null) {
+            if (localDataContentExtension != null && remoteDataContentExtension != null) {
                 //logger.info("CharlesXXX setDataSctpmap");
                 HammerUtils.setDataSctpmap(localDataContentExtension, remoteDataContentExtension);
             }
@@ -938,19 +970,13 @@ public class FakeUser implements StanzaListener
             //logger.info("After Sending session accept");
             logger.info(
                     this.nickname + " : Jingle accept-session message sent");
-        }
-        catch (SmackException.NotConnectedException e)
-        {
+        } catch (SmackException.NotConnectedException e) {
             logger.fatal("Cannot accept Jingle session: not connected");
             System.exit(1);
-        }
-        catch (InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             logger.fatal("Interrupted while sending session accept: " + e.toString());
             System.exit(1);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             logger.fatal("CharlesXXX General exception: " + e.toString());
         }
 
@@ -958,24 +984,19 @@ public class FakeUser implements StanzaListener
         // A listener to wake us up when the Agent enters a final state.
         final Object syncRoot = new Object();
         PropertyChangeListener propertyChangeListener
-                = new PropertyChangeListener()
-        {
+                = new PropertyChangeListener() {
             @Override
-            public void propertyChange(PropertyChangeEvent ev)
-            {
+            public void propertyChange(PropertyChangeEvent ev) {
                 Object newValue = ev.getNewValue();
 
                 if (IceProcessingState.COMPLETED.equals(newValue)
                         || IceProcessingState.FAILED.equals(newValue)
-                        || IceProcessingState.TERMINATED.equals(newValue))
-                {
+                        || IceProcessingState.TERMINATED.equals(newValue)) {
                     Agent iceAgent = (Agent) ev.getSource();
 
                     iceAgent.removeStateChangeListener(this);
-                    if (iceAgent == FakeUser.this.agent)
-                    {
-                        synchronized (syncRoot)
-                        {
+                    if (iceAgent == FakeUser.this.agent) {
+                        synchronized (syncRoot) {
                             syncRoot.notify();
                         }
                     }
@@ -987,11 +1008,9 @@ public class FakeUser implements StanzaListener
         agent.addStateChangeListener(propertyChangeListener);
         agent.startConnectivityEstablishment();
 
-        synchronized (syncRoot)
-        {
+        synchronized (syncRoot) {
             long startWait = System.currentTimeMillis();
-            do
-            {
+            do {
                 IceProcessingState iceState = agent.getState();
                 if (IceProcessingState.COMPLETED.equals(iceState)
                         || IceProcessingState.TERMINATED.equals(iceState)
@@ -1005,12 +1024,9 @@ public class FakeUser implements StanzaListener
                     break;
                 }
 
-                try
-                {
+                try {
                     syncRoot.wait(1000);
-                }
-                catch (InterruptedException ie)
-                {
+                } catch (InterruptedException ie) {
                     logger.fatal("Interrupted: " + ie);
                     break;
                 }
@@ -1024,10 +1040,9 @@ public class FakeUser implements StanzaListener
         IceProcessingState iceState = agent.getState();
         logger.info("CharlesXXX iceState=" + iceState);
         if (!IceProcessingState.COMPLETED.equals(iceState)
-                && !IceProcessingState.TERMINATED.equals(iceState))
-        {
+                && !IceProcessingState.TERMINATED.equals(iceState)) {
             logger.fatal("ICE failed for user " + nickname + ". Agent state: "
-                                 + iceState);
+                    + iceState);
             return;
         }
 
@@ -1036,14 +1051,13 @@ public class FakeUser implements StanzaListener
         // We drop incoming RTP packets when statistics are disabled in order
         // to improve performance.
         HammerUtils.addSocketToMediaStream(agent,
-                                           mediaStreamMap,
-                                           fakeUserStats == null);
+                mediaStreamMap,
+                fakeUserStats == null);
 
 
         logger.info("CharlesXXX Start the encryption of the MediaStreams");
         //Start the encryption of the MediaStreams
-        for(String key : contentMap.keySet())
-        {
+        for (String key : contentMap.keySet()) {
             MediaStream stream = mediaStreamMap.get(key);
             if (stream != null) // in case data stream
             {
@@ -1055,16 +1069,34 @@ public class FakeUser implements StanzaListener
 
         logger.info("CharlesXXX Start MediaStreams");
         //Start the MediaStream
-        for(String key : contentMap.keySet())
-        {
+        for (String key : contentMap.keySet()) {
             MediaStream stream = mediaStreamMap.get(key);
             if (stream != null) // in case data stream
             {
                 logger.info("Starting media stream " + stream.getFormat().getMediaType() +
-                    " with direction " + stream.getDirection() + " and srtpcontrol: " +
-                    stream.getSrtpControl());
+                        " with direction " + stream.getDirection() + " and srtpcontrol: " +
+                        stream.getSrtpControl());
                 stream.start();
             }
+        }
+
+        try
+        {
+            Thread.sleep(1000);
+        }
+        catch(InterruptedException ex)
+        {
+            Thread.currentThread().interrupt();
+        }
+
+        logger.info("CharlesXXX Start Recording");
+        try {
+            startRecording();
+        } catch (SmackException.NotConnectedException e) {
+            logger.fatal("Cannot start recording");
+            //System.exit(1);
+        } catch (Exception e) {
+            logger.fatal("CharlesXXX General exception: " + e.toString());
         }
     }
 

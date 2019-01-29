@@ -192,7 +192,7 @@ public class Hammer
         for (int j=0; j<numberOfRooms; j++) {
             String rname = this.roomname;
             if (numberOfRooms > 1)
-                rname = this.roomname + j;
+                rname = this.roomname + String.format ("%03d", j);
             for (int i = 0; i < numberOfUsers; i++) {
                 fakeUsers[k] = new FakeUser(
                         this,

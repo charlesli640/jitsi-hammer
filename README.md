@@ -119,6 +119,7 @@ For now it is set to only display at a WARNING level, but you can set "org.jitsi
 ## command of execution
 ./jitsi-hammer.sh -u "https://jitsi-meet-charles.magnet.com/http-bind/" -room YourRoom -rooms 5 -users 2 -videortpdump ./resources/rtp_vp8.rtpdump -audiortpdump ./resources/narwhals-audio.rtpdump -nick YourNick
 ./jitsi-hammer.sh -u "https://jitsi-meet-charles.magnet.com/http-bind/" -room abc -users 2 -videortpdump ./resources/rtp_vp8.rtpdump -audiortpdump ./resources/narwhals-audio.rtpdump -nick YourNick
+./jitsi-hammer.sh -u "https://jitsimeet.magnet.com/http-bind/" -room abc -users 3 -videortpdump ./resources/rtp_vp8.rtpdump -audiortpdump ./resources/narwhals-audio.rtpdump -nick YourNick
 
 ## Kill process
 ps -ef | grep jitsi-hammer | awk '{print $2}' |xargs kill -9

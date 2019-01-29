@@ -30,15 +30,7 @@ public class StartRecordingIQ extends IQ  {
 
     public static final String APP_DATA_ATTR_NAME = "app_data";
 
-
     private String sessionID;
-
-    /**
-     * The list of conference property packet extension for the properties
-     * associated with this conference
-     */
-    private List<ConferencePropertyPacketExtension> conferenceProperties
-            = new ArrayList<ConferencePropertyPacketExtension>();
 
     public StartRecordingIQ()
     {
@@ -54,9 +46,8 @@ public class StartRecordingIQ extends IQ  {
         xml.attribute(APP_DATA_ATTR_NAME, "");
         xml.attribute("streamid", "");
         xml.attribute("you_tube_broadcast_id", "");
-
         xml.attribute(SESSION_ID_ATTR_NAME, sessionID);
-
+        xml.setEmptyElement();
         return xml;
     }
 
