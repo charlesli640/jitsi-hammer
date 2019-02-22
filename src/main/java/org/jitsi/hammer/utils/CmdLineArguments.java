@@ -177,7 +177,7 @@ public class CmdLineArguments
      */
     @Option(name="-interval", usage="The interval in milliseconds between "
         + "the start of new users.")
-    private int interval = 2000;
+    private int interval = 6000;
 
     /**
      * Whether statistics should be disabled.
